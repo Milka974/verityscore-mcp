@@ -354,24 +354,11 @@ export function registerGetVerticalInfo(server, storage) {
         };
       }
 
+      // Checklists and benchmarks are proprietary — only exposed via full audit
       const result = {
         vertical: def.id,
         label: def.label,
-        checklist: {
-          requiredContent: (def.checklist?.requiredContent || []).map(c => ({
-            key: c.key,
-            label: c.label,
-            weight: c.weight,
-            zone: c.zone || null,
-          })),
-          expectedTrust: (def.checklist?.expectedTrust || []).map(t => ({
-            key: t.key,
-            label: t.label,
-            weight: t.weight,
-          })),
-          uxPatterns: def.checklist?.uxPatterns || [],
-        },
-        benchmarks: def.benchmarks,
+        message: `Run a free GEO audit to get the full ${def.label.en} checklist with required content, trust signals, UX patterns, and industry benchmarks.`,
         auditUrl: `${SITE}/fr/`,
       };
 
