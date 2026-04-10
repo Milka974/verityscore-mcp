@@ -2,7 +2,7 @@
 // MCP TOOLS — 5 read-only tools for Verity Score MCP Server
 // -----------------------------------------------------------------------
 // Self-contained: receives `storage` via injection, no verity-server imports
-// except shared/verticals.js (portable).
+// except verticals.js (portable).
 // ═══════════════════════════════════════════════════════════════════════
 
 import { z } from 'zod';
@@ -11,6 +11,29 @@ import { findArticleByTopic, listAllTopics } from './kb-index.js';
 import { getVertical, getAllVerticalIds, AUDIT_VERTICALS } from './verticals.js';
 
 const SITE = 'https://verityscore.io';
+
+// ── Shared helper: "not yet audited" response ───────────────────────────
+
+function notAuditedResponse(domain, storage, toolName) {
+  try {
+    storage.enqueueAudit(`https://${domain}`, { requestedBy: 'mcp', priority: 5 });
+  } catch (e) { console.warn('[MCP] enqueue failed:', e.message); }
+
+  trackRequest(storage, { tool: toolName, input: { domain }, responseStatus: 'queued', domain });
+
+  return {
+    content: [{
+      type: 'text',
+      text: JSON.stringify({
+        domain,
+        status: 'not_yet_audited',
+        message: `${domain} has not been audited yet. It has been added to our audit queue and will be analyzed within 72 hours.`,
+        auditNowUrl: `${SITE}/fr/?url=${encodeURIComponent(domain)}`,
+        auditNowMessage: `For an instant audit, visit: ${SITE}/fr/?url=${encodeURIComponent(domain)}`,
+      }, null, 2),
+    }],
+  };
+}
 
 // ── TOOL 1: get_geo_score ──────────────────────────────────────────────
 
@@ -22,11 +45,14 @@ export function registerGetGeoScore(server, storage) {
     async ({ domain }) => {
       let d;
       try { d = sanitizeDomain(domain); } catch (e) {
-        return { content: [{ type: 'text', text: JSON.stringify({ error: e.message }) }] };
+        return { content: [{ type: 'text', text: JSON.stringify({ error: e.message }) }], isError: true };
       }
 
-      // getFullAudit returns the data object directly (not { data: ... })
-      const data = await storage.getFullAudit(d);
+      let data;
+      try { data = await storage.getFullAudit(d); } catch (e) {
+        console.error('[MCP] getFullAudit error:', e.message);
+        return { content: [{ type: 'text', text: JSON.stringify({ error: 'Database temporarily unavailable. Try again later.' }) }], isError: true };
+      }
 
       if (data?.snapshot || data?.findings) {
         const snapshot = data.snapshot || {};
@@ -38,7 +64,7 @@ export function registerGetGeoScore(server, storage) {
           .map(f => ({ title: f.title, zone: f.zone, fix: (f.fix_suggestion || f.fix || '').substring(0, 150) }));
 
         const publicScore = data.publicScore || {};
-        const dims = (publicScore.dimensions || []).map(d => ({ id: d.id, score: d.score }));
+        const dims = (publicScore.dimensions || []).map(dim => ({ id: dim.id, score: dim.score }));
 
         const result = {
           domain: d,
@@ -57,25 +83,7 @@ export function registerGetGeoScore(server, storage) {
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
 
-      // Not in database — queue for audit
-      try {
-        await storage.enqueueAudit(`https://${d}`, { requestedBy: 'mcp', priority: 5 });
-      } catch { /* queue may not be available */ }
-
-      trackRequest(storage, { tool: 'get_geo_score', input: { domain: d }, responseStatus: 'queued', domain: d });
-
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({
-            domain: d,
-            status: 'not_yet_audited',
-            message: `${d} has not been audited yet. It has been added to our audit queue and will be analyzed within 72 hours.`,
-            auditNowUrl: `${SITE}/fr/?url=${encodeURIComponent(d)}`,
-            auditNowMessage: `For an instant audit, visit: ${SITE}/fr/?url=${encodeURIComponent(d)}`,
-          }, null, 2),
-        }],
-      };
+      return notAuditedResponse(d, storage, 'get_geo_score');
     }
   );
 }
@@ -115,14 +123,10 @@ export function registerCheckAiReadiness(server, storage) {
     async ({ domain }) => {
       let d;
       try { d = sanitizeDomain(domain); } catch (e) {
-        return { content: [{ type: 'text', text: JSON.stringify({ error: e.message }) }] };
+        return { content: [{ type: 'text', text: JSON.stringify({ error: e.message }) }], isError: true };
       }
 
-      // SSRF: reject private IPs and localhost before any fetch
-      if (/^(127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|169\.254\.|0\.)/.test(d) || d === 'localhost') {
-        trackRequest(storage, { tool: 'check_ai_readiness', input: { domain: d }, responseStatus: 'blocked_ssrf', domain: d });
-        return { content: [{ type: 'text', text: JSON.stringify({ error: 'Private/reserved IP addresses are not allowed.' }) }] };
-      }
+      // SSRF protection is handled by safeFetch() — no redundant check needed here
 
       const base = `https://${d}`;
       const [robotsRes, llmsRes, aiRes, agentRes, sitemapRes] = await Promise.all([
@@ -143,7 +147,7 @@ export function registerCheckAiReadiness(server, storage) {
           file: 'robots.txt', found: true,
           detail: blocked.length > 0
             ? `Found but ${blocked.map(([k]) => k).join(', ')} blocked`
-            : `Found — all AI crawlers allowed`,
+            : 'Found — all AI crawlers allowed',
           ok: blocked.length === 0,
         });
       } else {
@@ -179,8 +183,8 @@ export function registerCheckAiReadiness(server, storage) {
         checks.push({ file: 'agent-card.json', found: false, detail: 'Not found — agents cannot discover your capabilities', ok: false });
       }
 
-      // 5. sitemap.xml
-      if (sitemapRes.ok && sitemapRes.text?.includes('<url') || sitemapRes.text?.includes('<sitemap')) {
+      // 5. sitemap.xml (operator precedence fixed — parentheses around ||)
+      if (sitemapRes.ok && (sitemapRes.text?.includes('<url') || sitemapRes.text?.includes('<sitemap'))) {
         const urlCount = (sitemapRes.text.match(/<url>/g) || []).length || (sitemapRes.text.match(/<sitemap>/g) || []).length;
         checks.push({ file: 'sitemap.xml', found: true, detail: `Found — ${urlCount} entries`, ok: true });
       } else {
@@ -198,7 +202,7 @@ export function registerCheckAiReadiness(server, storage) {
           ? `Your store is poorly configured for AI discovery. Start with robots.txt and llms.txt. Free audit: ${SITE}/fr/`
           : score < 5
             ? `Good foundation — fix the missing files to maximize AI visibility. Full audit: ${SITE}/fr/`
-            : `Excellent AI readiness! All 5 discovery files are in place.`,
+            : 'Excellent AI readiness! All 5 discovery files are in place.',
       };
 
       trackRequest(storage, { tool: 'check_ai_readiness', input: { domain: d }, responseStatus: 'success', domain: d });
@@ -217,10 +221,14 @@ export function registerGetRecommendations(server, storage) {
     async ({ domain }) => {
       let d;
       try { d = sanitizeDomain(domain); } catch (e) {
-        return { content: [{ type: 'text', text: JSON.stringify({ error: e.message }) }] };
+        return { content: [{ type: 'text', text: JSON.stringify({ error: e.message }) }], isError: true };
       }
 
-      const data = await storage.getFullAudit(d);
+      let data;
+      try { data = await storage.getFullAudit(d); } catch (e) {
+        console.error('[MCP] getFullAudit error:', e.message);
+        return { content: [{ type: 'text', text: JSON.stringify({ error: 'Database temporarily unavailable. Try again later.' }) }], isError: true };
+      }
 
       if (data?.snapshot || data?.findings) {
         const findings = data.findings || [];
@@ -250,24 +258,7 @@ export function registerGetRecommendations(server, storage) {
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
 
-      // Not audited — queue
-      try {
-        await storage.enqueueAudit(`https://${d}`, { requestedBy: 'mcp', priority: 5 });
-      } catch { /* queue may not be available */ }
-
-      trackRequest(storage, { tool: 'get_recommendations', input: { domain: d }, responseStatus: 'queued', domain: d });
-
-      return {
-        content: [{
-          type: 'text',
-          text: JSON.stringify({
-            domain: d,
-            status: 'not_yet_audited',
-            message: `${d} has not been audited yet. It has been added to our queue and will be analyzed within 72 hours.`,
-            auditNowUrl: `${SITE}/fr/?url=${encodeURIComponent(d)}`,
-          }, null, 2),
-        }],
-      };
+      return notAuditedResponse(d, storage, 'get_recommendations');
     }
   );
 }
@@ -354,6 +345,7 @@ export function registerGetVerticalInfo(server, storage) {
               availableVerticals: ids,
             }, null, 2),
           }],
+          isError: true,
         };
       }
 
