@@ -1,0 +1,41 @@
+{
+  "name": "@verityscore/mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Verity Score — GEO readiness audit for Shopify stores. 5 read-only tools: get_geo_score, check_ai_readiness, get_recommendations, explain_topic, get_vertical_info.",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "verityscore-mcp": "src/cli.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "geo",
+    "shopify",
+    "ai-commerce",
+    "audit",
+    "chatgpt-shopping",
+    "perplexity",
+    "schema-org",
+    "structured-data",
+    "agentic-commerce"
+  ],
+  "author": "Verity Score <hello@verityscore.io>",
+  "license": "MIT",
+  "homepage": "https://verityscore.io",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Milka974/verityscore-mcp"
+  },
+  "mcpName": "io.verityscore/geo-audit",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "zod": "^3.25.0",
+    "express": "^4.21.0",
+    "express-rate-limit": "^8.3.1"
+  }
+}
