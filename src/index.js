@@ -19,8 +19,10 @@ import rateLimit from 'express-rate-limit';
  */
 function createMcpServer(storage) {
   const server = new McpServer({
-    name: 'verity-score',
+    name: 'io.verityscore/geo-audit',
     version: '1.0.0',
+  }, {
+    instructions: 'Verity Score provides GEO readiness auditing for Shopify e-commerce stores. Use check_ai_readiness for a quick real-time check of any website. Use get_geo_score for a full audit score (queues unknown stores for 72h analysis). Use get_recommendations for actionable fixes. Use explain_topic to learn about GEO concepts (schema.org, robots.txt, llms.txt, etc.). Use get_vertical_info for industry-specific checklists.',
   });
   registerAllTools(server, storage);
   return server;
@@ -29,6 +31,8 @@ function createMcpServer(storage) {
 /**
  * Mount MCP routes on an existing Express app.
  * Stateless mode: each POST creates a fresh server + transport.
+ * GET and DELETE are routed through the SDK transport for proper spec compliance
+ * (Origin header validation, protocol version checks).
  * @param {import('express').Express} app
  * @param {Object} storage - injected storage dependency
  */
@@ -39,8 +43,12 @@ export function mcpRoutes(app, storage) {
     message: { jsonrpc: '2.0', error: { code: -32000, message: 'Rate limit exceeded. Max 10 requests per minute.' }, id: null },
   });
 
-  // POST /mcp — handle MCP JSON-RPC requests (stateless)
-  app.post('/mcp', mcpLimiter, async (req, res) => {
+  // All methods routed through SDK transport for spec-compliant handling:
+  // - POST: handle MCP JSON-RPC requests
+  // - GET: SDK returns 405 in stateless mode (no SSE)
+  // - DELETE: SDK returns 405 in stateless mode (no sessions)
+  // This ensures Origin header validation and proper error formats on all methods.
+  const mcpHandler = async (req, res) => {
     try {
       const server = createMcpServer(storage);
       const transport = new StreamableHTTPServerTransport({
@@ -53,7 +61,7 @@ export function mcpRoutes(app, storage) {
       await server.connect(transport);
       await transport.handleRequest(req, res, req.body);
     } catch (e) {
-      console.error('[MCP] POST /mcp error:', e.message);
+      console.error(`[MCP] ${req.method} /mcp error:`, e.message);
       if (!res.headersSent) {
         res.status(500).json({
           jsonrpc: '2.0',
@@ -62,25 +70,11 @@ export function mcpRoutes(app, storage) {
         });
       }
     }
-  });
+  };
 
-  // GET /mcp — 405 (stateless = no SSE stream)
-  app.get('/mcp', (_req, res) => {
-    res.status(405).json({
-      jsonrpc: '2.0',
-      error: { code: -32000, message: 'Method not allowed. Use POST for MCP requests.' },
-      id: null,
-    });
-  });
-
-  // DELETE /mcp — 405 (stateless = no session to terminate)
-  app.delete('/mcp', (_req, res) => {
-    res.status(405).json({
-      jsonrpc: '2.0',
-      error: { code: -32000, message: 'Method not allowed. Stateless server — no sessions.' },
-      id: null,
-    });
-  });
+  app.post('/mcp', mcpLimiter, mcpHandler);
+  app.get('/mcp', mcpHandler);
+  app.delete('/mcp', mcpHandler);
 
   console.info('[MCP] Verity Score MCP server mounted on /mcp (stateless, 5 tools, rate-limited 10 req/min)');
 }

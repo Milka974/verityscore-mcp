@@ -42,6 +42,7 @@ export function registerGetGeoScore(server, storage) {
     'get_geo_score',
     'Get the GEO readiness score for a Shopify store. Returns score, vertical, top findings, and report link. If not yet audited, the store is queued for audit within 72 hours.',
     { domain: z.string().min(3).max(100).describe('Store domain (e.g. "mybrand.com")') },
+    { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async ({ domain }) => {
       let d;
       try { d = sanitizeDomain(domain); } catch (e) {
@@ -120,6 +121,7 @@ export function registerCheckAiReadiness(server, storage) {
     'check_ai_readiness',
     'Quick AI readiness check for any website. Checks 5 AI discovery files in real-time: robots.txt, llms.txt, ai.txt, agent-card.json, sitemap.xml. Returns a score from 0 to 5 with per-file recommendations.',
     { domain: z.string().min(3).max(100).describe('Website domain (e.g. "mybrand.com")') },
+    { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: true },
     async ({ domain }) => {
       let d;
       try { d = sanitizeDomain(domain); } catch (e) {
@@ -218,6 +220,7 @@ export function registerGetRecommendations(server, storage) {
     'get_recommendations',
     'Get the top 3 priority recommendations to improve AI visibility for a Shopify store. Returns actionable fixes with expected impact. If not yet audited, the store is queued for audit within 72 hours.',
     { domain: z.string().min(3).max(100).describe('Store domain (e.g. "mybrand.com")') },
+    { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async ({ domain }) => {
       let d;
       try { d = sanitizeDomain(domain); } catch (e) {
@@ -270,6 +273,7 @@ export function registerExplainTopic(server, storage) {
     'explain_topic',
     'Explains a GEO or AI commerce concept with actionable guidance for Shopify merchants. Topics: schema.org, robots.txt, llms.txt, AggregateRating, ACP, UCP, Perplexity Shopping, ChatGPT Shopping, claims, E-E-A-T, and more.',
     { topic: z.string().min(2).max(100).describe('Topic keyword (e.g. "schema.org", "robots.txt", "reviews")') },
+    { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async ({ topic }) => {
       const article = findArticleByTopic(topic);
 
@@ -311,6 +315,7 @@ export function registerGetVerticalInfo(server, storage) {
     'get_vertical_info',
     'Get AI commerce checklist and benchmarks for a specific e-commerce vertical (beauty, fashion, food, electronics, etc.). Without argument, lists all 15 supported verticals.',
     { vertical: z.string().max(50).optional().describe('Vertical name (e.g. "beauty", "food"). Omit to list all.') },
+    { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     async ({ vertical }) => {
       if (!vertical) {
         const ids = getAllVerticalIds();
