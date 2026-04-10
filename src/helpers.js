@@ -27,6 +27,8 @@ export function sanitizeDomain(raw) {
     throw new Error(`Invalid domain: "${d}"`);
   }
   if (d.length < 3 || d.length > 100) throw new Error('Domain must be 3-100 characters');
+  // Reject raw IP addresses — only real domain names allowed
+  if (/^\d{1,3}(\.\d{1,3}){3}$/.test(d)) throw new Error('IP addresses are not allowed. Use a domain name.');
   return d;
 }
 
