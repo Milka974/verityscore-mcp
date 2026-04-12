@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.verityscore/geo-audit",
-  "description": "GEO readiness audit for Shopify stores. 5 read-only tools: get_geo_score (score + findings), check_ai_readiness (real-time AI file check), get_recommendations (top 3 fixes), explain_topic (19 AI commerce guides), get_vertical_info (15 e-commerce vertical checklists). Free, no authentication required.",
+  "description": "GEO audit for Shopify: AI readiness score, recommendations, and 15 vertical checklists.",
   "repository": {
     "url": "https://github.com/Milka974/verityscore-mcp",
     "source": "github"

@@ -1,0 +1,1541 @@
+{
+  "_meta": {
+    "version": "1.0.0",
+    "description": "GEO Evidence Cards - Source unique de verite pour les signaux GEO. Alimente le rapport d'audit, la KB publique, et le MCP explain_topic.",
+    "last_updated": "2026-04-12",
+    "card_count": 20
+  },
+  "cards": [
+    {
+      "id": "heading_structure",
+      "label": {
+        "fr": "Structure des titres (H1/H2/H3)",
+        "en": "Heading Structure (H1/H2/H3)"
+      },
+      "category": "content_structure",
+      "zones": ["Z16_title_h1", "Z16_title_h1_gap"],
+      "dimensions": ["catalog_semantics", "crawlability"],
+      "impact": {
+        "google_aio": {
+          "level": "medium",
+          "evidence": "Les systemes RAG decoupent le contenu aux frontieres H2. Chaque section H2 est un candidat de citation independant. Contenu structure 50-150 mots recoit 2.3x plus de citations."
+        },
+        "perplexity": {
+          "level": "medium",
+          "evidence": "Le pipeline RAG de Perplexity decoupe et indexe le contenu web aux frontieres de headings."
+        },
+        "chatgpt_shopping": {
+          "level": "low",
+          "evidence": "ChatGPT Shopping est feed-driven, les headings HTML ne sont pas lus directement pour les recommandations produit."
+        },
+        "general_llm": {
+          "level": "medium",
+          "evidence": "Le paper HtmlRAG (2024) demontre que le HTML structure bat le texte plat dans 6 datasets QA avec Llama-3.1-70B."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "medium",
+          "why": "H1 produit important pour identification, H2 pour sections (ingredients, usage, FAQ). Structure aide le chunking RAG."
+        },
+        "editorial": {
+          "relevance": "high",
+          "why": "Chaque H2 = candidat de citation independant. 55% des citations AIO viennent du top 30% de la page."
+        },
+        "collection": {
+          "relevance": "low",
+          "why": "Structure simple, peu de chunking. Le contenu est surtout une liste de produits."
+        }
+      },
+      "sources": [
+        {
+          "title": "HtmlRAG: HTML is Better Than Plain Text for RAG",
+          "url": "https://arxiv.org/html/2411.02959v1",
+          "date": "2024-11",
+          "type": "academic"
+        },
+        {
+          "title": "How LLMs Use H2s and H3s to Generate Answers",
+          "url": "https://www.singlegrain.com/content-marketing-strategy-2/how-llms-use-h2s-and-h3s-to-generate-answers/",
+          "date": "2026-03",
+          "type": "industry"
+        },
+        {
+          "title": "How LLMs Interpret Content: Structure Information For AI Search",
+          "url": "https://www.searchenginejournal.com/how-llms-interpret-content-structure-information-for-ai-search/544308/",
+          "date": "2026-02",
+          "type": "industry"
+        },
+        {
+          "title": "Kapa.ai: Heading cleanup raised retrieval precision",
+          "url": null,
+          "date": "2025",
+          "type": "case_study"
+        }
+      ],
+      "stats": [
+        {
+          "value": "2.3x",
+          "metric": "plus de citations pour contenu structure 50-150 mots",
+          "source_index": 1
+        },
+        {
+          "value": "71% -> 84%",
+          "metric": "precision retrieval apres nettoyage hierarchie headings",
+          "source_index": 3
+        }
+      ],
+      "kb_slug": null,
+      "summary": {
+        "fr": "Les systemes RAG decoupent le contenu aux frontieres H2/H3. Un H1 unique par page et une hierarchie logique (H1>H2>H3) ameliorent la precision d'extraction de 13%. Chaque section H2 bien structuree est un candidat de citation independant pour les IA generatives.",
+        "en": "RAG systems chunk content at H2/H3 boundaries. A single H1 per page and logical hierarchy (H1>H2>H3) improves extraction precision by 13%. Each well-structured H2 section is an independent citation candidate for generative AI."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    },
+    {
+      "id": "faq_schema",
+      "label": {
+        "fr": "FAQ Schema.org (FAQPage)",
+        "en": "FAQ Schema.org (FAQPage)"
+      },
+      "category": "structured_data",
+      "zones": ["Z11_faq", "Z51_policy_pdp_gap"],
+      "dimensions": ["catalog_semantics", "crawlability"],
+      "impact": {
+        "google_aio": {
+          "level": "high",
+          "evidence": "Pages avec FAQ schema 3.2x plus de chances d'apparaitre en AI Overview (Frase.io). Google a confirme en avril 2025 que les donnees structurees donnent un avantage."
+        },
+        "perplexity": {
+          "level": "high",
+          "evidence": "Perplexity tire le contenu FAQ directement pour repondre aux questions utilisateur. +22% citations IA mesurees sur 50 domaines."
+        },
+        "chatgpt_shopping": {
+          "level": "medium",
+          "evidence": "FAQ en format machine-readable aide ChatGPT a repondre aux questions produit. Le feed produit reste le canal principal."
+        },
+        "general_llm": {
+          "level": "high",
+          "evidence": "Le format Q&A s'aligne naturellement avec comment les utilisateurs interrogent les IA. Schema FAQPage a le plus haut taux de citation parmi les types de schema."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "high",
+          "why": "+22% citations IA pour fiches produit avec FAQ schema. Repond aux questions acheteur (ingredients, usage, compatibilite)."
+        },
+        "editorial": {
+          "relevance": "high",
+          "why": "FAQ schema structure les reponses pour l'extraction IA directe."
+        },
+        "collection": {
+          "relevance": "medium",
+          "why": "FAQ sur les categories peut aider la decouverte (ex: 'Quelle creme pour peau seche ?')."
+        }
+      },
+      "sources": [
+        {
+          "title": "Stop Using FAQ Schema: The New Rules of Structured Data in 2026",
+          "url": "https://greenserp.com/high-impact-schema-seo-guide/",
+          "date": "2026-01",
+          "type": "industry"
+        },
+        {
+          "title": "Schema Markup After March 2026: Structured Data Update",
+          "url": "https://www.digitalapplied.com/blog/schema-markup-after-march-2026-structured-data-strategies",
+          "date": "2026-03",
+          "type": "industry"
+        },
+        {
+          "title": "What is FAQ Schema: A Beginner's Guide (2026)",
+          "url": "https://www.imarkinfotech.com/what-is-faq-schema-a-beginners-guide-2026/",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "FAQ Schema for AI Search (GEO/AEO)",
+          "url": "https://www.frase.io/blog/faq-schema-ai-search-geo-aeo",
+          "date": "2026",
+          "type": "industry"
+        }
+      ],
+      "stats": [
+        {
+          "value": "+22%",
+          "metric": "citations IA avec FAQPage schema (etude 50 domaines B2B/ecommerce)",
+          "source_index": 0
+        },
+        {
+          "value": "3.2x",
+          "metric": "plus de chances d'apparaitre en Google AI Overview",
+          "source_index": 3
+        }
+      ],
+      "kb_slug": null,
+      "summary": {
+        "fr": "Google a deprecie les FAQ rich results en SERP mais le schema FAQPage reste activement lu par les IA generatives. Etude sur 50 domaines : +22% de citations IA. Le format Q&A s'aligne naturellement avec les requetes utilisateur et facilite l'extraction directe par les agents.",
+        "en": "Google deprecated FAQ rich results in SERPs but FAQPage schema is still actively read by generative AI. Study on 50 domains: +22% AI citations. Q&A format naturally aligns with user queries and facilitates direct extraction by AI agents."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "moderate",
+      "_caveat": "Le chiffre 3.2x vient d'une analyse industrie (Frase.io), pas d'une etude peer-reviewed. Le +22% est plus fiable mais l'etude n'est pas publiee academiquement."
+    },
+    {
+      "id": "price_coherence",
+      "label": {
+        "fr": "Coherence prix schema/page",
+        "en": "Price Coherence (Schema vs Display)"
+      },
+      "category": "data_accuracy",
+      "zones": ["Z36_promo_schema_gaps", "Z104_variant_price_coherence", "Z_product_card_coherence"],
+      "dimensions": ["offer_accuracy", "variant_readiness"],
+      "impact": {
+        "google_aio": {
+          "level": "high",
+          "evidence": "Google AI Mode verifie les faits en temps reel. Un ecart de prix entre schema et page affiche declenche une exclusion."
+        },
+        "perplexity": {
+          "level": "critical",
+          "evidence": "Perplexity Shopping affiche le prix du schema dans les cartes produit. Un ecart = perte de confiance immediate."
+        },
+        "chatgpt_shopping": {
+          "level": "critical",
+          "evidence": "ChatGPT Shopping utilise le feed produit. Incoherence feed/page = produit exclu ou mal recommande."
+        },
+        "general_llm": {
+          "level": "high",
+          "evidence": "Les agents comparent systematiquement prix structures et prix affiches. Ecart = signal de non-fiabilite."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "critical",
+          "why": "L'agent IA compare le prix schema vs prix affiche. Un ecart (ex: 3.90 EUR vs 29.90 EUR) tue la confiance et exclut le produit."
+        },
+        "editorial": {
+          "relevance": "low",
+          "why": "Pas de prix sur les pages editoriales."
+        },
+        "collection": {
+          "relevance": "high",
+          "why": "Les prix collection doivent correspondre aux prix PDP et schema."
+        }
+      },
+      "sources": [
+        {
+          "title": "Perplexity Shopping: How to Optimize Your Store for AI (2026)",
+          "url": "https://www.shopify.com/blog/perplexity-shopping",
+          "date": "2026-04",
+          "type": "official"
+        },
+        {
+          "title": "The Complete Product Data Optimization Guide for Google's AI Shopping (2026)",
+          "url": "https://www.efulfillmentservice.com/2026/01/the-complete-product-data-optimization-guide-for-googles-ai-shopping-2026/",
+          "date": "2026-01",
+          "type": "industry"
+        },
+        {
+          "title": "Your Shopify Store Is on ChatGPT Shopping But Your Products Aren't Showing",
+          "url": "https://metricusapp.com/blog/shopify-chatgpt-shopping-products-not-showing/",
+          "date": "2026",
+          "type": "industry"
+        }
+      ],
+      "stats": [
+        {
+          "value": "3-4x",
+          "metric": "visibilite IA pour stores avec Golden Record (99.9% completude attributs)",
+          "source_index": 1
+        }
+      ],
+      "kb_slug": "pricing-ai-visibility",
+      "summary": {
+        "fr": "Un ecart de prix entre le schema JSON-LD et le prix affiche sur la page est un signal critique pour tous les agents IA. Perplexity et ChatGPT Shopping affichent le prix du schema/feed - toute incoherence entraine l'exclusion du produit des recommandations.",
+        "en": "A price gap between JSON-LD schema and the displayed price is a critical signal for all AI agents. Perplexity and ChatGPT Shopping display the schema/feed price - any inconsistency leads to product exclusion from recommendations."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    },
+    {
+      "id": "schema_completeness",
+      "label": {
+        "fr": "Completude schema Product",
+        "en": "Product Schema Completeness"
+      },
+      "category": "structured_data",
+      "zones": ["Z08_schema_org", "Z08_schema_values", "Z08_schema_completeness", "Z102_schema_completeness"],
+      "dimensions": ["catalog_semantics", "offer_accuracy"],
+      "impact": {
+        "google_aio": {
+          "level": "critical",
+          "evidence": "Schema markup = 73% higher selection rates. Pages avec structured data 3x plus de chances d'AI citation."
+        },
+        "perplexity": {
+          "level": "critical",
+          "evidence": "Schema.org Product+Offer+Review+AggregateRating = must-have. GTIN critique pour matching et deduplication."
+        },
+        "chatgpt_shopping": {
+          "level": "high",
+          "evidence": "Le feed produit est le canal principal mais le schema renforce la validation. 65% des pages citees incluent structured data."
+        },
+        "general_llm": {
+          "level": "critical",
+          "evidence": "Schema.org est le langage commun que tous les agents IA utilisent pour comprendre les produits."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "critical",
+          "why": "Product, Offer, AggregateRating, GTIN, shippingDetails, returnPolicy - chaque champ manquant = signal perdu."
+        },
+        "editorial": {
+          "relevance": "medium",
+          "why": "Article, WebPage schema aident mais moins critique que Product schema."
+        },
+        "collection": {
+          "relevance": "high",
+          "why": "CollectionPage + ItemList schema aide la decouverte par categorie."
+        }
+      },
+      "sources": [
+        {
+          "title": "Why Structured Data in AI Search Matters More Than Ever in 2026",
+          "url": "https://writesonic.com/blog/structured-data-in-ai-search",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "Google AI Overviews Ranking Factors: 2026 Guide",
+          "url": "https://wellows.com/blog/google-ai-overviews-ranking-factors/",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "Schema Markup for AI Search: Ecommerce Guide 2026",
+          "url": "https://alhena.ai/blog/schema-markup-ai-search-ecommerce/",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "Schema and AI Overviews: Does structured data improve visibility?",
+          "url": "https://searchengineland.com/schema-ai-overviews-structured-data-visibility-462353",
+          "date": "2025",
+          "type": "industry"
+        }
+      ],
+      "stats": [
+        {
+          "value": "73%",
+          "metric": "higher selection rates pour pages avec schema vs sans",
+          "source_index": 0
+        },
+        {
+          "value": "3x",
+          "metric": "plus de chances d'AI citation avec schema markup",
+          "source_index": 2
+        },
+        {
+          "value": "65%",
+          "metric": "des pages citees en IA incluent structured data",
+          "source_index": 0
+        }
+      ],
+      "kb_slug": "schema-org",
+      "summary": {
+        "fr": "Le schema.org Product est le langage que les crawlers IA utilisent pour comprendre vos produits. Les pages avec donnees structurees ont 73% plus de chances d'etre selectionnees en AI Overview et 3x plus de chances d'etre citees. Chaque champ manquant (GTIN, prix, dispo, avis) est un signal perdu.",
+        "en": "Schema.org Product is the language AI crawlers use to understand your products. Pages with structured data have 73% higher selection rates in AI Overviews and are 3x more likely to be cited. Every missing field (GTIN, price, availability, reviews) is a lost signal."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    },
+    {
+      "id": "aggregate_rating",
+      "label": {
+        "fr": "Note agregee structuree (AggregateRating)",
+        "en": "Structured Aggregate Rating"
+      },
+      "category": "social_proof",
+      "zones": ["Z12_aggregate_rating", "Z12_reviews_semantic_quality"],
+      "dimensions": ["proof_exposure", "trust_policy"],
+      "impact": {
+        "google_aio": {
+          "level": "high",
+          "evidence": "AggregateRating est un des types de schema les plus impactants pour la citation IA. Signal de confiance fort."
+        },
+        "perplexity": {
+          "level": "critical",
+          "evidence": "Le ranking model Perplexity inclut le review trust score comme facteur cle. Schema AggregateRating = must-have."
+        },
+        "chatgpt_shopping": {
+          "level": "high",
+          "evidence": "ChatGPT Shopping synthetise les pros/cons depuis les reviews. Aggregate rating affiche dans les cartes produit."
+        },
+        "general_llm": {
+          "level": "high",
+          "evidence": "Sans note agregee structuree, les agents ne peuvent pas comparer les produits objectivement."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "critical",
+          "why": "Pas de note = pas de recommandation. L'agent ne peut pas justifier un choix sans rating."
+        },
+        "editorial": {
+          "relevance": "low",
+          "why": "Reviews pas pertinentes pour le contenu editorial."
+        },
+        "collection": {
+          "relevance": "medium",
+          "why": "Rating moyen de la collection aide au tri par categorie."
+        }
+      },
+      "sources": [
+        {
+          "title": "How Perplexity Picks Its Top 3 Product Recommendations",
+          "url": "https://alhena.ai/blog/perplexity-product-recommendations-optimization/",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "Perplexity Shopping: How to Optimize Your Store for AI (2026)",
+          "url": "https://www.shopify.com/blog/perplexity-shopping",
+          "date": "2026-04",
+          "type": "official"
+        },
+        {
+          "title": "Perplexity Shopping: Complete Guide to AI-Powered Product Discovery",
+          "url": "https://hashmeta.com/blog/perplexity-shopping-complete-guide-to-ai-powered-product-discovery/",
+          "date": "2026",
+          "type": "industry"
+        }
+      ],
+      "stats": [
+        {
+          "value": "57%",
+          "metric": "higher AOV pour les shoppers Perplexity vs search classique",
+          "source_index": 1
+        },
+        {
+          "value": "45M",
+          "metric": "MAU Perplexity en Q1 2026, 80% diplomes, 65% hauts revenus",
+          "source_index": 1
+        }
+      ],
+      "kb_slug": "aggregate-rating",
+      "summary": {
+        "fr": "Sans AggregateRating dans le schema, les agents IA ne peuvent pas comparer objectivement votre produit aux concurrents. Perplexity Shopping utilise le review trust score comme facteur cle de ranking. Pas de note structuree = produit invisible en recommandation.",
+        "en": "Without AggregateRating in schema, AI agents cannot objectively compare your product to competitors. Perplexity Shopping uses review trust score as a key ranking factor. No structured rating = invisible product in recommendations."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    },
+    {
+      "id": "shipping_structured",
+      "label": {
+        "fr": "Livraison structuree (OfferShippingDetails)",
+        "en": "Structured Shipping (OfferShippingDetails)"
+      },
+      "category": "commerce_data",
+      "zones": ["Z01_delivery_promise", "Z60_shipping_schema"],
+      "dimensions": ["offer_accuracy", "actionability"],
+      "impact": {
+        "google_aio": {
+          "level": "high",
+          "evidence": "OfferShippingDetails dans schema Product = signal fort pour Google AI Mode."
+        },
+        "perplexity": {
+          "level": "high",
+          "evidence": "L'agent doit pouvoir repondre 'livre en X jours'. Sans schema, hallucination ou exclusion."
+        },
+        "chatgpt_shopping": {
+          "level": "high",
+          "evidence": "Le feed produit doit inclure shipping info. Champ optionnel mais fortement recommande."
+        },
+        "general_llm": {
+          "level": "high",
+          "evidence": "La livraison est une des premieres questions acheteur. Un agent qui ne peut pas y repondre perd la vente."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "high",
+          "why": "OfferShippingDetails avec delai, cout, zone dans le schema Product. Info visible pres du bouton d'achat."
+        },
+        "editorial": {
+          "relevance": "low",
+          "why": "Pas pertinent pour le contenu editorial."
+        },
+        "collection": {
+          "relevance": "medium",
+          "why": "Seuil livraison gratuite visible sur les collections."
+        }
+      },
+      "sources": [
+        {
+          "title": "Google AI Shopping Features: How to Maximize Your Visibility (2026)",
+          "url": "https://www.shopify.com/blog/google-ai-shopping",
+          "date": "2026-04",
+          "type": "official"
+        },
+        {
+          "title": "Product Feed Optimization for AI Agents (2026 Guide)",
+          "url": "https://ucphub.ai/product-feed-optimization-for-ai-shopping-agents-the-2026-distribution-guide/",
+          "date": "2026",
+          "type": "industry"
+        }
+      ],
+      "stats": [],
+      "kb_slug": "shipping-returns",
+      "summary": {
+        "fr": "Un agent IA doit pouvoir repondre 'livre en X jours a Y EUR'. Sans OfferShippingDetails dans le schema Product, l'agent hallucine ou exclut le produit. Ajouter le delai, le cout et la zone de livraison dans les donnees structurees.",
+        "en": "An AI agent must be able to answer 'delivered in X days for Y EUR'. Without OfferShippingDetails in Product schema, the agent hallucinates or excludes the product. Add delivery time, cost, and shipping zone to structured data."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    },
+    {
+      "id": "return_policy",
+      "label": {
+        "fr": "Politique retours structuree (MerchantReturnPolicy)",
+        "en": "Structured Return Policy (MerchantReturnPolicy)"
+      },
+      "category": "commerce_data",
+      "zones": ["Z61_return_schema"],
+      "dimensions": ["offer_accuracy", "trust_policy"],
+      "impact": {
+        "google_aio": {
+          "level": "medium",
+          "evidence": "hasMerchantReturnPolicy dans schema Product = signal de confiance pour Google AI."
+        },
+        "perplexity": {
+          "level": "high",
+          "evidence": "L'agent doit rassurer l'acheteur sur les retours. Info structuree = reponse fiable."
+        },
+        "chatgpt_shopping": {
+          "level": "high",
+          "evidence": "Shopify Agentic Storefronts (mars 2026) requiert Terms of Service + Return Policy completes pour eligibilite."
+        },
+        "general_llm": {
+          "level": "high",
+          "evidence": "Les politiques de retour sont un critere de decision majeur. L'agent doit pouvoir y repondre sans ambiguite."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "high",
+          "why": "MerchantReturnPolicy avec delai, conditions, remboursement dans le schema. Visible pres du CTA."
+        },
+        "editorial": {
+          "relevance": "low",
+          "why": "Pas pertinent pour le contenu editorial."
+        },
+        "collection": {
+          "relevance": "low",
+          "why": "Policy generalement au niveau site, pas collection."
+        }
+      },
+      "sources": [
+        {
+          "title": "9 Shopify AI Commerce Insights UK Retailers Need for 2026",
+          "url": "https://www.pushgroup.co.uk/blog/9-things-every-shopify-merchant-needs-to-know-about-ai-commerce-in-2026",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "Perplexity Shopping: How to Optimize Your Store for AI (2026)",
+          "url": "https://www.shopify.com/blog/perplexity-shopping",
+          "date": "2026-04",
+          "type": "official"
+        }
+      ],
+      "stats": [],
+      "kb_slug": "shipping-returns",
+      "summary": {
+        "fr": "Shopify Agentic Storefronts (mars 2026) requiert une Return Policy complete pour l'eligibilite. hasMerchantReturnPolicy dans le schema Product permet aux agents de rassurer l'acheteur sans ambiguite sur le delai et les conditions de retour.",
+        "en": "Shopify Agentic Storefronts (March 2026) requires a complete Return Policy for eligibility. hasMerchantReturnPolicy in Product schema allows agents to reassure buyers about return terms without ambiguity."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    },
+    {
+      "id": "image_alt_quality",
+      "label": {
+        "fr": "Qualite alt text images",
+        "en": "Image Alt Text Quality"
+      },
+      "category": "content_structure",
+      "zones": ["Z41_image_alt_quality", "Z41_js_invisible", "Z103_captions", "Z_image_alt_quality"],
+      "dimensions": ["catalog_semantics", "crawlability"],
+      "impact": {
+        "google_aio": {
+          "level": "medium",
+          "evidence": "Pages multi-modales (texte+images+video+structured data) = 156% higher selection rates en AI Overview."
+        },
+        "perplexity": {
+          "level": "medium",
+          "evidence": "Alt text = seul moyen pour les agents de comprendre les images produit sans vision."
+        },
+        "chatgpt_shopping": {
+          "level": "low",
+          "evidence": "ChatGPT Shopping utilise les images du feed, pas les alt text HTML."
+        },
+        "general_llm": {
+          "level": "medium",
+          "evidence": "Les agents text-only dependent des alt text pour toute comprehension visuelle. Alt vide = image invisible."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "high",
+          "why": "Chaque image produit doit avoir un alt unique decrivant l'angle, la texture, le packaging, l'utilisation."
+        },
+        "editorial": {
+          "relevance": "medium",
+          "why": "Alt text aide l'accessibilite et la comprehension IA."
+        },
+        "collection": {
+          "relevance": "medium",
+          "why": "Thumbnails collection avec alt = meilleur crawl."
+        }
+      },
+      "sources": [
+        {
+          "title": "Google AI Overviews Ranking Factors: 2026 Guide",
+          "url": "https://wellows.com/blog/google-ai-overviews-ranking-factors/",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "Google AI Overview: New Ranking Signals That Matter in 2026",
+          "url": "https://mikekhorev.com/google-ai-overview",
+          "date": "2026",
+          "type": "industry"
+        }
+      ],
+      "stats": [
+        {
+          "value": "156%",
+          "metric": "higher selection rates pour contenu multi-modal vs texte seul",
+          "source_index": 0
+        }
+      ],
+      "kb_slug": null,
+      "summary": {
+        "fr": "L'alt text est le seul moyen pour les agents IA text-only de comprendre vos images produit. Chaque image doit avoir un alt unique et descriptif. Les pages multi-modales (texte + images + donnees structurees) ont 156% plus de chances d'etre selectionnees en AI Overview.",
+        "en": "Alt text is the only way for text-only AI agents to understand your product images. Each image needs a unique, descriptive alt. Multi-modal pages (text + images + structured data) have 156% higher selection rates in AI Overviews."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    },
+    {
+      "id": "llms_txt",
+      "label": {
+        "fr": "Fichier llms.txt",
+        "en": "llms.txt File"
+      },
+      "category": "ai_discovery",
+      "zones": ["Z09_llms_txt", "Z09_llms_txt_coherence"],
+      "dimensions": ["crawlability"],
+      "impact": {
+        "google_aio": {
+          "level": "low",
+          "evidence": "Google n'utilise pas officiellement llms.txt. Impact indirect via meilleure comprehension du site."
+        },
+        "perplexity": {
+          "level": "medium",
+          "evidence": "Perplexity peut lire llms.txt pour comprendre le contexte du site et les regles de crawl."
+        },
+        "chatgpt_shopping": {
+          "level": "medium",
+          "evidence": "ChatGPT web browsing peut utiliser llms.txt pour navigation et comprehension du catalogue."
+        },
+        "general_llm": {
+          "level": "high",
+          "evidence": "llms.txt est le robots.txt pour les LLM. Guide les agents vers les sections cles du site."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "medium",
+          "why": "Impact indirect - llms.txt aide a la decouverte site-level, pas a la PDP directement."
+        },
+        "editorial": {
+          "relevance": "high",
+          "why": "Guide les agents vers le contenu editorial et les guides."
+        },
+        "collection": {
+          "relevance": "medium",
+          "why": "llms.txt peut lister les collections principales."
+        }
+      },
+      "sources": [
+        {
+          "title": "llms.txt - Standard propose",
+          "url": "https://llmstxt.org",
+          "date": "2024",
+          "type": "standard"
+        }
+      ],
+      "stats": [],
+      "kb_slug": "llms-txt",
+      "summary": {
+        "fr": "llms.txt est le robots.txt pour les LLM. Il guide les agents IA vers les sections cles de votre site (catalogue, livraison, retours, FAQ). La coherence entre llms.txt et le contenu reel du site est critique - un fichier divergent = mesinformation agent.",
+        "en": "llms.txt is robots.txt for LLMs. It guides AI agents to key sections of your site (catalog, shipping, returns, FAQ). Coherence between llms.txt and actual site content is critical - a divergent file = agent misinformation."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    },
+    {
+      "id": "external_citations",
+      "label": {
+        "fr": "Sources externes / liens sortants",
+        "en": "External Citations / Outbound Links"
+      },
+      "category": "content_credibility",
+      "zones": [],
+      "dimensions": ["proof_exposure"],
+      "impact": {
+        "google_aio": {
+          "level": "high",
+          "evidence": "Citation graph > domain authority en 2026. Pages citees en AIO incluent quasi systematiquement des liens vers des domaines de confiance."
+        },
+        "perplexity": {
+          "level": "medium",
+          "evidence": "Perplexity a augmente le poids des citations de ~23% dans ses guidelines fevrier 2026."
+        },
+        "chatgpt_shopping": {
+          "level": "low",
+          "evidence": "ChatGPT Shopping est feed-driven. Les liens sortants d'une PDP n'impactent pas le feed."
+        },
+        "general_llm": {
+          "level": "medium",
+          "evidence": "Princeton GEO: +28% visibilite avec citations sources. Surtout efficace pour contenu mal classe (+115%)."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "low",
+          "why": "Les PDP e-commerce sont selectionnees via feed, pas via citation graph. Liens sortants peu pertinents."
+        },
+        "editorial": {
+          "relevance": "high",
+          "why": "Blogs, guides, comparatifs beneficient fortement des citations externes (+28% Princeton)."
+        },
+        "collection": {
+          "relevance": "low",
+          "why": "Pages collection = listes produit, pas de contenu editorial."
+        }
+      },
+      "sources": [
+        {
+          "title": "GEO: Generative Engine Optimization (Princeton, KDD 2024)",
+          "url": "https://arxiv.org/pdf/2311.09735",
+          "date": "2024-08",
+          "type": "academic"
+        },
+        {
+          "title": "Google AI Overview Citations Drop From Top-10 Pages (2026)",
+          "url": "https://almcorp.com/blog/google-ai-overview-citations-drop-top-ranking-pages-2026/",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "AI citations favor listicles, articles, product pages: Study",
+          "url": "https://searchengineland.com/ai-citations-favor-listicles-articles-product-pages-study-472364",
+          "date": "2026-04",
+          "type": "industry"
+        }
+      ],
+      "stats": [
+        {
+          "value": "+28%",
+          "metric": "visibilite avec citations sources (Princeton GEO)",
+          "source_index": 0
+        },
+        {
+          "value": "+115%",
+          "metric": "pour contenu mal classe (position 5+)",
+          "source_index": 0
+        },
+        {
+          "value": "38%",
+          "metric": "des citations AIO viennent du top 10 (vs 76% avant Gemini 3)",
+          "source_index": 1
+        }
+      ],
+      "kb_slug": null,
+      "summary": {
+        "fr": "Les citations externes ont un impact fort sur le contenu editorial (+28% visibilite, Princeton GEO) mais faible sur les fiches produit e-commerce (feed-driven). En 2026, le citation graph pese plus que le domain authority : un site moyen bien cite bat un site fort non cite.",
+        "en": "External citations have strong impact on editorial content (+28% visibility, Princeton GEO) but low impact on e-commerce product pages (feed-driven). In 2026, citation graph outweighs domain authority: a well-cited moderate site beats an uncited strong site."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high",
+      "_caveat": "Le paper Princeton a des limites methodologiques (citations fabricees autorisees, corpus 5 pages, GPT-3.5). Gain reel probablement inferieur a 28%."
+    },
+    {
+      "id": "stat_density",
+      "label": {
+        "fr": "Densite statistiques / donnees chiffrees",
+        "en": "Statistical Data Density"
+      },
+      "category": "content_credibility",
+      "zones": ["Z70_stat_density"],
+      "dimensions": ["catalog_semantics", "proof_exposure"],
+      "impact": {
+        "google_aio": {
+          "level": "high",
+          "evidence": "Articles cites en AIO contiennent 62% plus de faits. Statistiques = 2eme methode GEO la plus efficace."
+        },
+        "perplexity": {
+          "level": "medium",
+          "evidence": "Perplexity favorise le contenu factuel et chiffre pour ses reponses."
+        },
+        "chatgpt_shopping": {
+          "level": "low",
+          "evidence": "Pour le shopping, les specs produit (poids, dimensions, concentration) sont les 'statistiques' qui comptent, via le feed."
+        },
+        "general_llm": {
+          "level": "high",
+          "evidence": "Princeton GEO: +41% visibilite en ajoutant des statistiques, methode la plus efficace testee."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "medium",
+          "why": "Les specs produit (poids, dimensions, concentration, resultats cliniques) sont les statistiques pertinentes pour une PDP."
+        },
+        "editorial": {
+          "relevance": "high",
+          "why": "Statistiques, etudes, donnees chiffrees = fort impact sur citation IA (+41% Princeton)."
+        },
+        "collection": {
+          "relevance": "low",
+          "why": "Peu de statistiques pertinentes sur les pages collection."
+        }
+      },
+      "sources": [
+        {
+          "title": "GEO: Generative Engine Optimization (Princeton, KDD 2024)",
+          "url": "https://arxiv.org/pdf/2311.09735",
+          "date": "2024-08",
+          "type": "academic"
+        },
+        {
+          "title": "Google AI Overviews Ranking Factors: 2026 Guide",
+          "url": "https://wellows.com/blog/google-ai-overviews-ranking-factors/",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "Why Original Research Gets More AI Citations",
+          "url": "https://ziptie.dev/blog/how-original-research-wins-ai-citations/",
+          "date": "2026",
+          "type": "industry"
+        }
+      ],
+      "stats": [
+        {
+          "value": "+41%",
+          "metric": "visibilite IA en ajoutant des statistiques (Princeton GEO, methode la plus efficace)",
+          "source_index": 0
+        },
+        {
+          "value": "62%",
+          "metric": "plus de faits dans les articles cites en AI Overview vs non cites",
+          "source_index": 1
+        },
+        {
+          "value": "2.3x",
+          "metric": "plus de citations pour contenu haute densite informationnelle",
+          "source_index": 1
+        }
+      ],
+      "kb_slug": null,
+      "summary": {
+        "fr": "L'ajout de statistiques est la methode GEO la plus efficace (+41%, Princeton). Les articles cites en AI Overview contiennent 62% plus de faits. Pour les PDP, les 'statistiques' sont les specs produit (poids, dimensions, resultats cliniques) et les preuves chiffrees d'efficacite.",
+        "en": "Adding statistics is the most effective GEO method (+41%, Princeton). AI Overview cited articles contain 62% more facts. For PDPs, 'statistics' are product specs (weight, dimensions, clinical results) and quantified efficacy proof."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high",
+      "_caveat": "Le paper Princeton permettait les stats fabricees. Le +41% est un plafond theorique. Gain reel avec stats reelles probablement 15-25%."
+    },
+    {
+      "id": "entity_density",
+      "label": {
+        "fr": "Densite d'entites nommees",
+        "en": "Named Entity Density"
+      },
+      "category": "content_structure",
+      "zones": ["Z71_entity_density"],
+      "dimensions": ["catalog_semantics"],
+      "impact": {
+        "google_aio": {
+          "level": "high",
+          "evidence": "15+ entites connectees = 4.8x likelihood selection AIO. Entity density r=0.76 avec selection AI Overview."
+        },
+        "perplexity": {
+          "level": "medium",
+          "evidence": "Richesse semantique aide Perplexity a comprendre le contexte produit et les relations."
+        },
+        "chatgpt_shopping": {
+          "level": "medium",
+          "evidence": "Entites dans le feed (marque, materiau, certification) aident le matching semantique."
+        },
+        "general_llm": {
+          "level": "high",
+          "evidence": "Keyword density = -9% (nocif). Entity density = fortement positif. Distinction critique."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "high",
+          "why": "Ingredients, certifications, materiaux, marques complementaires = entites nommees. Richesse semantique naturelle."
+        },
+        "editorial": {
+          "relevance": "high",
+          "why": "Noms de produits, marques, personnes, lieux = reseau d'entites qui renforce la citation."
+        },
+        "collection": {
+          "relevance": "medium",
+          "why": "Entites de categorie (type de peau, routine, occasion)."
+        }
+      },
+      "sources": [
+        {
+          "title": "Google AI Overviews Ranking Factors: 2026 Guide",
+          "url": "https://wellows.com/blog/google-ai-overviews-ranking-factors/",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "100+ AI SEO Statistics for 2026",
+          "url": "https://www.position.digital/blog/ai-seo-statistics/",
+          "date": "2026-04",
+          "type": "industry"
+        },
+        {
+          "title": "GEO: Generative Engine Optimization (Princeton, KDD 2024)",
+          "url": "https://arxiv.org/pdf/2311.09735",
+          "date": "2024-08",
+          "type": "academic"
+        }
+      ],
+      "stats": [
+        {
+          "value": "4.8x",
+          "metric": "likelihood selection AIO pour pages avec 15+ entites connectees",
+          "source_index": 0
+        },
+        {
+          "value": "r=0.76",
+          "metric": "correlation entity density avec selection AI Overview",
+          "source_index": 0
+        },
+        {
+          "value": "-9%",
+          "metric": "visibilite pour keyword stuffing (Princeton GEO - seule methode negative)",
+          "source_index": 2
+        }
+      ],
+      "kb_slug": null,
+      "summary": {
+        "fr": "La densite d'entites nommees (ingredients, certifications, marques, materiaux) correle a r=0.76 avec la selection en AI Overview. 15+ entites connectees = 4.8x plus de chances. Attention : le keyword stuffing est la seule methode GEO qui fait BAISSER la visibilite (-9%).",
+        "en": "Named entity density (ingredients, certifications, brands, materials) correlates at r=0.76 with AI Overview selection. 15+ connected entities = 4.8x higher likelihood. Warning: keyword stuffing is the only GEO method that DECREASES visibility (-9%)."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    },
+    {
+      "id": "golden_record",
+      "label": {
+        "fr": "Golden Record (completude attributs produit)",
+        "en": "Golden Record (Product Attribute Completeness)"
+      },
+      "category": "data_accuracy",
+      "zones": ["Z35_agentic_readiness"],
+      "dimensions": ["offer_accuracy", "variant_readiness", "actionability"],
+      "impact": {
+        "google_aio": {
+          "level": "high",
+          "evidence": "Completude attributs = signal de qualite pour Google AI Shopping."
+        },
+        "perplexity": {
+          "level": "critical",
+          "evidence": "Perplexity combine schema completeness + prix temps reel + review trust score. Chaque champ vide = signal perdu."
+        },
+        "chatgpt_shopping": {
+          "level": "critical",
+          "evidence": "Stores avec 99.9% completude (Golden Record) = 3-4x visibilite. Chaque champ optionnel vide est un signal manque."
+        },
+        "general_llm": {
+          "level": "critical",
+          "evidence": "Shopify Agentic Storefronts (mars 2026) syndique automatiquement le catalogue aux plateformes IA. Completude = visibilite."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "critical",
+          "why": "Chaque attribut (GTIN, materiaux, dimensions, poids, certifications, metafields) alimente le feed et le schema."
+        },
+        "editorial": {
+          "relevance": "low",
+          "why": "Concept specifique au e-commerce."
+        },
+        "collection": {
+          "relevance": "medium",
+          "why": "Attributs collection (description, image, filtres) aident la decouverte."
+        }
+      },
+      "sources": [
+        {
+          "title": "The Complete Product Data Optimization Guide for Google's AI Shopping (2026)",
+          "url": "https://www.efulfillmentservice.com/2026/01/the-complete-product-data-optimization-guide-for-googles-ai-shopping-2026/",
+          "date": "2026-01",
+          "type": "industry"
+        },
+        {
+          "title": "Perplexity Shopping: How to Optimize Your Store for AI (2026)",
+          "url": "https://www.shopify.com/blog/perplexity-shopping",
+          "date": "2026-04",
+          "type": "official"
+        },
+        {
+          "title": "Your Shopify Store Is on ChatGPT Shopping But Products Aren't Showing",
+          "url": "https://metricusapp.com/blog/shopify-chatgpt-shopping-products-not-showing/",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "9 Shopify AI Commerce Insights for 2026",
+          "url": "https://www.pushgroup.co.uk/blog/9-things-every-shopify-merchant-needs-to-know-about-ai-commerce-in-2026",
+          "date": "2026",
+          "type": "industry"
+        }
+      ],
+      "stats": [
+        {
+          "value": "3-4x",
+          "metric": "visibilite IA pour stores avec Golden Record (99.9% completude)",
+          "source_index": 0
+        }
+      ],
+      "kb_slug": "ai-buyer-score",
+      "summary": {
+        "fr": "Les stores avec 99.9% de completude attributs (Golden Record) ont 3-4x plus de visibilite dans les recommandations IA. Depuis mars 2026, Shopify Agentic Storefronts syndique automatiquement le catalogue aux plateformes IA - chaque champ vide est un signal perdu.",
+        "en": "Stores with 99.9% attribute completeness (Golden Record) have 3-4x more visibility in AI recommendations. Since March 2026, Shopify Agentic Storefronts automatically syndicates the catalog to AI platforms - every empty field is a lost signal."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    },
+    {
+      "id": "content_freshness",
+      "label": {
+        "fr": "Fraicheur du contenu",
+        "en": "Content Freshness"
+      },
+      "category": "content_credibility",
+      "zones": ["Z40_freshness_composite", "Z39_new_products_ai_readiness", "Z108_seasonal_collections"],
+      "dimensions": ["catalog_semantics", "trust_policy"],
+      "impact": {
+        "google_aio": {
+          "level": "high",
+          "evidence": "50% du contenu cite en AI search a moins de 13 semaines. Fraicheur = facteur de selection."
+        },
+        "perplexity": {
+          "level": "high",
+          "evidence": "Perplexity favorise les sources recentes. Prix et stock en temps reel requis."
+        },
+        "chatgpt_shopping": {
+          "level": "medium",
+          "evidence": "Feed mis a jour toutes les 15 min possible. Donnees stales = drop en ranking."
+        },
+        "general_llm": {
+          "level": "high",
+          "evidence": "Le contenu cite le mois dernier est remplace par des sources plus fraiches ce mois-ci."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "high",
+          "why": "dateModified + datePublished dans JSON-LD. Collections nouveautes a jour. Saisonnalite geree."
+        },
+        "editorial": {
+          "relevance": "high",
+          "why": "Articles mis a jour > articles anciens pour la citation IA."
+        },
+        "collection": {
+          "relevance": "high",
+          "why": "Collections saisonnieres obsoletes = signal negatif."
+        }
+      },
+      "sources": [
+        {
+          "title": "GEO 2026: The State of Generative Engine Optimization Right Now",
+          "url": "https://devtripathi.in/blogs/geo-2026-ai-search-state-report/",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "Content Freshness & AI Citations Guide (2026)",
+          "url": "https://www.qwairy.co/blog/content-freshness-ai-citations-guide",
+          "date": "2026",
+          "type": "industry"
+        }
+      ],
+      "stats": [
+        {
+          "value": "50%",
+          "metric": "du contenu cite en AI search a moins de 13 semaines",
+          "source_index": 0
+        },
+        {
+          "value": "15 min",
+          "metric": "frequence de mise a jour possible pour le feed ChatGPT Shopping",
+          "source_index": 0
+        }
+      ],
+      "kb_slug": null,
+      "summary": {
+        "fr": "50% du contenu cite en AI search a moins de 13 semaines. Les sources d'hier sont remplacees par celles d'aujourd'hui. Ajoutez dateModified au JSON-LD, gardez les collections nouveautes a jour, et gerez la saisonnalite pour eviter les signaux de contenu obsolete.",
+        "en": "50% of AI search cited content is less than 13 weeks old. Yesterday's sources are replaced by today's. Add dateModified to JSON-LD, keep new arrivals collections current, and manage seasonality to avoid stale content signals."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    },
+    {
+      "id": "variant_readiness",
+      "label": {
+        "fr": "Variantes IA-lisibles",
+        "en": "AI-Readable Variants"
+      },
+      "category": "commerce_data",
+      "zones": ["Z106_variant_ai_readiness"],
+      "dimensions": ["variant_readiness", "offer_accuracy"],
+      "impact": {
+        "google_aio": {
+          "level": "medium",
+          "evidence": "Chaque variante avec son propre Offer = meilleur matching pour Google AI Shopping."
+        },
+        "perplexity": {
+          "level": "high",
+          "evidence": "Perplexity affiche taille/couleur dans les cartes produit. Variantes structurees = meilleure UX."
+        },
+        "chatgpt_shopping": {
+          "level": "critical",
+          "evidence": "ChatGPT utilise les variants du feed pour comparaison et recommandation precise."
+        },
+        "general_llm": {
+          "level": "high",
+          "evidence": "Sans variantes structurees, l'agent ne peut pas repondre 'disponible en taille M, bleu, 39.90 EUR'."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "critical",
+          "why": "Chaque variante = son propre Offer (prix, SKU, availability, GTIN). Indispensable pour le shopping IA."
+        },
+        "editorial": {
+          "relevance": "low",
+          "why": "Pas de variantes sur le contenu editorial."
+        },
+        "collection": {
+          "relevance": "medium",
+          "why": "Les filtres collection doivent reflechir les variantes disponibles."
+        }
+      },
+      "sources": [
+        {
+          "title": "ChatGPT Product Feed (2026): Specification for ChatGPT Shopping",
+          "url": "https://www.lengow.com/get-to-know-more/chatgpt-product-feed/",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "Perplexity Shopping: How to Optimize Your Store for AI (2026)",
+          "url": "https://www.shopify.com/blog/perplexity-shopping",
+          "date": "2026-04",
+          "type": "official"
+        }
+      ],
+      "stats": [],
+      "kb_slug": null,
+      "summary": {
+        "fr": "Chaque variante produit doit avoir son propre Offer dans le schema (prix, SKU, disponibilite, GTIN). Sans variantes structurees, l'agent IA ne peut pas repondre 'disponible en taille M, bleu, a 39.90 EUR'. ChatGPT Shopping utilise directement les variants du feed.",
+        "en": "Each product variant must have its own Offer in schema (price, SKU, availability, GTIN). Without structured variants, the AI agent cannot answer 'available in size M, blue, at 39.90 EUR'. ChatGPT Shopping directly uses feed variants."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    },
+    {
+      "id": "trust_signals",
+      "label": {
+        "fr": "Signaux de confiance",
+        "en": "Trust Signals"
+      },
+      "category": "social_proof",
+      "zones": ["Z03_quiz_diagnostic", "Z05_social_proof_freshness", "Z93_professional_endorsement", "Z_claims_verifiable"],
+      "dimensions": ["trust_policy", "proof_exposure"],
+      "impact": {
+        "google_aio": {
+          "level": "high",
+          "evidence": "96% des citations AIO viennent de sources avec signaux E-E-A-T forts. Brand recognition r=0.664 avec citation."
+        },
+        "perplexity": {
+          "level": "medium",
+          "evidence": "Perplexity favorise les experts verifies avec +15% preference citation (guidelines fevrier 2026)."
+        },
+        "chatgpt_shopping": {
+          "level": "medium",
+          "evidence": "ChatGPT synthetise pros/cons depuis les reviews. Signaux de confiance aident la recommandation."
+        },
+        "general_llm": {
+          "level": "high",
+          "evidence": "Les agents evaluent la fiabilite avant de recommander. Certifications, endorsements, badges = confiance."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "medium",
+          "why": "Badges, certifications, cautions dermatologue, labels bio = signaux de confiance PDP."
+        },
+        "editorial": {
+          "relevance": "high",
+          "why": "Auteur expert, credentials, sources citees = E-E-A-T fort."
+        },
+        "collection": {
+          "relevance": "low",
+          "why": "Peu de signaux de confiance specifiques aux collections."
+        }
+      },
+      "sources": [
+        {
+          "title": "Google AI Overviews Ranking Factors: 2026 Guide (Wellows/StackMatix)",
+          "url": "https://wellows.com/blog/google-ai-overviews-ranking-factors/",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "AI Citation Report 2025: Sources AI Overviews Trust Most",
+          "url": "https://surferseo.com/blog/ai-citation-report/",
+          "date": "2025",
+          "type": "industry"
+        }
+      ],
+      "stats": [
+        {
+          "value": "96%",
+          "metric": "des citations AIO viennent de sources avec signaux E-E-A-T forts",
+          "source_index": 0
+        },
+        {
+          "value": "r=0.664",
+          "metric": "correlation brand mentions avec probabilite citation IA",
+          "source_index": 0
+        }
+      ],
+      "kb_slug": "eeat-signals-ai",
+      "summary": {
+        "fr": "96% des citations AI Overview viennent de sources avec signaux E-E-A-T forts. Les brand mentions correlent a r=0.664 avec la probabilite de citation. Certifications verifiables, endorsements professionnels et badges de confiance renforcent la recommandation IA.",
+        "en": "96% of AI Overview citations come from sources with strong E-E-A-T signals. Brand mentions correlate at r=0.664 with citation probability. Verifiable certifications, professional endorsements, and trust badges strengthen AI recommendation."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    },
+    {
+      "id": "catalog_hygiene",
+      "label": {
+        "fr": "Hygiene catalogue",
+        "en": "Catalog Hygiene"
+      },
+      "category": "data_accuracy",
+      "zones": ["Z_catalog_hygiene", "Z108_seasonal_collections", "Z108_multi_pdp_consistency", "Z51_empty_collection"],
+      "dimensions": ["catalog_semantics", "crawlability"],
+      "impact": {
+        "google_aio": {
+          "level": "medium",
+          "evidence": "Sitemap propre = meilleur crawl budget. Collections vides polluent l'index."
+        },
+        "perplexity": {
+          "level": "medium",
+          "evidence": "Perplexity crawle le sitemap. Collections vides = signal de catalogue mal maintenu."
+        },
+        "chatgpt_shopping": {
+          "level": "high",
+          "evidence": "Le catalogue Shopify est syndique aux IA via Agentic Storefronts. Catalogue propre = meilleure syndication."
+        },
+        "general_llm": {
+          "level": "medium",
+          "evidence": "Collections saisonnieres obsoletes, PDPs inconsistantes = signal de negligence."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "medium",
+          "why": "Coherence signaux de confiance entre PDPs. Uniformiser livraison, retours, garantie."
+        },
+        "editorial": {
+          "relevance": "low",
+          "why": "Pas directement lie au contenu editorial."
+        },
+        "collection": {
+          "relevance": "high",
+          "why": "Collections vides, saisonnieres obsoletes, sans produit = a supprimer ou rediriger."
+        }
+      },
+      "sources": [
+        {
+          "title": "Perplexity Shopping: How to Optimize Your Store for AI (2026)",
+          "url": "https://www.shopify.com/blog/perplexity-shopping",
+          "date": "2026-04",
+          "type": "official"
+        }
+      ],
+      "stats": [],
+      "kb_slug": null,
+      "summary": {
+        "fr": "Les collections vides, saisonnieres obsoletes et les inconsistances entre fiches produit polluent le sitemap et signalent un catalogue mal maintenu. Depuis Shopify Agentic Storefronts (mars 2026), le catalogue est syndique automatiquement aux IA - un catalogue propre est indispensable.",
+        "en": "Empty collections, obsolete seasonal collections, and inconsistencies between product pages pollute the sitemap and signal a poorly maintained catalog. Since Shopify Agentic Storefronts (March 2026), the catalog is automatically syndicated to AI - a clean catalog is essential."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    },
+    {
+      "id": "robots_crawlers",
+      "label": {
+        "fr": "Robots.txt + crawlers IA",
+        "en": "Robots.txt + AI Crawlers"
+      },
+      "category": "ai_discovery",
+      "zones": ["Z29_robots_ai_crawlers", "Z_robots_deep"],
+      "dimensions": ["crawlability"],
+      "impact": {
+        "google_aio": {
+          "level": "medium",
+          "evidence": "Googlebot doit avoir acces. Certains themes Shopify bloquent accidentellement des sections."
+        },
+        "perplexity": {
+          "level": "high",
+          "evidence": "PerplexityBot doit etre autorise. Bloquer = invisibilite complete sur Perplexity."
+        },
+        "chatgpt_shopping": {
+          "level": "medium",
+          "evidence": "OAI-SearchBot doit etre autorise pour le web browsing. Le feed passe par un canal separe."
+        },
+        "general_llm": {
+          "level": "high",
+          "evidence": "GPTBot, ClaudeBot, PerplexityBot, Bytespider - chaque bot bloque = une plateforme perdue."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "medium",
+          "why": "Impact sitewide, pas specifique PDP. Verifier que les PDPs ne sont pas accidentellement bloquees."
+        },
+        "editorial": {
+          "relevance": "medium",
+          "why": "Blog et guides doivent etre crawlables par les bots IA."
+        },
+        "collection": {
+          "relevance": "medium",
+          "why": "Collections doivent etre accessibles pour la decouverte catalogue."
+        }
+      },
+      "sources": [
+        {
+          "title": "70+ AI Search Stats for 2026 (Fully Verified & Up-to-Date)",
+          "url": "https://seranking.com/blog/ai-statistics/",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "Q1 2026 AI Citation Trends Report for Shopify Brands",
+          "url": "https://ecommercefastlane.com/2026-ai-citation-trends-report/",
+          "date": "2026",
+          "type": "industry"
+        }
+      ],
+      "stats": [],
+      "kb_slug": "robots-crawlers",
+      "summary": {
+        "fr": "Chaque bot IA bloque dans robots.txt = une plateforme perdue. GPTBot, ClaudeBot, PerplexityBot, OAI-SearchBot doivent etre autorises. En 2026, Amazon restreint ses crawlers et Walmart gagne en visibilite IA - le controle d'acces est un levier strategique.",
+        "en": "Every AI bot blocked in robots.txt = a lost platform. GPTBot, ClaudeBot, PerplexityBot, OAI-SearchBot must be allowed. In 2026, Amazon restricts its crawlers and Walmart gains AI visibility - access control is a strategic lever."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    },
+    {
+      "id": "eeat_signals",
+      "label": {
+        "fr": "Signaux E-E-A-T",
+        "en": "E-E-A-T Signals"
+      },
+      "category": "content_credibility",
+      "zones": ["Z_claims_verifiable", "Z93_professional_endorsement"],
+      "dimensions": ["trust_policy", "proof_exposure"],
+      "impact": {
+        "google_aio": {
+          "level": "critical",
+          "evidence": "96% des citations AIO de sources E-E-A-T fortes. Google December 2025 Core Update a renforce E-E-A-T, marques perdant 40-55% trafic sans E-E-A-T."
+        },
+        "perplexity": {
+          "level": "medium",
+          "evidence": "Perplexity favorise experts verifies +15% preference citation (guidelines fevrier 2026)."
+        },
+        "chatgpt_shopping": {
+          "level": "low",
+          "evidence": "ChatGPT Shopping est feed-driven. E-E-A-T impacte surtout le contenu editorial que ChatGPT web browse."
+        },
+        "general_llm": {
+          "level": "medium",
+          "evidence": "E-E-A-T n'est pas un score que les LLM calculent mais les signaux proxy (entites, reputation, auteur) sont utilises."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "medium",
+          "why": "E-E-A-T PDP = schema complete, reviews verifiees, certifications. Pas d'auteur sur une PDP."
+        },
+        "editorial": {
+          "relevance": "critical",
+          "why": "Auteur expert, credentials, sources citees = E-E-A-T maximum. 96% des citations AIO."
+        },
+        "collection": {
+          "relevance": "low",
+          "why": "Peu d'E-E-A-T specifique aux collections."
+        }
+      },
+      "sources": [
+        {
+          "title": "Google AI Overviews Ranking Factors: 2026 Guide",
+          "url": "https://wellows.com/blog/google-ai-overviews-ranking-factors/",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "AI Citation Report 2025: Sources AI Overviews Trust Most",
+          "url": "https://surferseo.com/blog/ai-citation-report/",
+          "date": "2025",
+          "type": "industry"
+        },
+        {
+          "title": "How to Rank in Google AI Overviews in 2026: Tactical Framework",
+          "url": "https://www.analyticsinsight.net/seo/how-to-rank-in-google-ai-overviews-in-2026-a-tactical-seo-framework",
+          "date": "2026",
+          "type": "industry"
+        }
+      ],
+      "stats": [
+        {
+          "value": "96%",
+          "metric": "des citations AI Overview de sources avec E-E-A-T forts",
+          "source_index": 0
+        },
+        {
+          "value": "40-55%",
+          "metric": "perte trafic pour marques sans E-E-A-T (Google Dec 2025 Core Update)",
+          "source_index": 0
+        },
+        {
+          "value": "47%",
+          "metric": "des citations ChatGPT viennent de Wikipedia (ultimate E-E-A-T source)",
+          "source_index": 1
+        }
+      ],
+      "kb_slug": "eeat-signals-ai",
+      "summary": {
+        "fr": "E-E-A-T n'est pas un score direct que les LLM calculent, mais un framework dont les signaux proxy (entites, reputation domaine, auteur) impactent fortement la citation IA. 96% des citations AI Overview viennent de sources E-E-A-T fortes. Impact critique pour le contenu editorial, modere pour les PDP e-commerce.",
+        "en": "E-E-A-T is not a direct score LLMs compute, but a framework whose proxy signals (entities, domain reputation, author) strongly impact AI citation. 96% of AI Overview citations come from strong E-E-A-T sources. Critical for editorial content, moderate for e-commerce PDPs."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    },
+    {
+      "id": "product_feed",
+      "label": {
+        "fr": "Feed produit (Atom, Google Merchant, ChatGPT)",
+        "en": "Product Feed (Atom, Google Merchant, ChatGPT)"
+      },
+      "category": "ai_discovery",
+      "zones": ["Z_atom_feed", "Z_chatgpt_feed_readiness"],
+      "dimensions": ["actionability", "crawlability"],
+      "impact": {
+        "google_aio": {
+          "level": "medium",
+          "evidence": "Google Merchant Center feed alimente Google AI Shopping. Completude attributs critique."
+        },
+        "perplexity": {
+          "level": "critical",
+          "evidence": "Perplexity agrege depuis les feeds + schema + reviews. Feed = canal d'ingestion direct."
+        },
+        "chatgpt_shopping": {
+          "level": "critical",
+          "evidence": "ChatGPT Shopping est 100% feed-driven. CSV/TSV/XML/JSON, updates toutes les 15 min. Le feed est le produit."
+        },
+        "general_llm": {
+          "level": "high",
+          "evidence": "Le feed enrichi (use-case, problem-solution, lifestyle, compatibilite) > copie du feed Google Shopping."
+        }
+      },
+      "page_context": {
+        "product_page": {
+          "relevance": "critical",
+          "why": "Le feed est alimente par les donnees PDP. Completude PDP = completude feed."
+        },
+        "editorial": {
+          "relevance": "low",
+          "why": "Les feeds produit ne concernent pas le contenu editorial."
+        },
+        "collection": {
+          "relevance": "medium",
+          "why": "Les collections informent la categorisation dans le feed."
+        }
+      },
+      "sources": [
+        {
+          "title": "ChatGPT Product Feed (2026): Specification for ChatGPT Shopping",
+          "url": "https://www.lengow.com/get-to-know-more/chatgpt-product-feed/",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "Optimizing for ChatGPT Shopping: How product feeds power GEO",
+          "url": "https://searchengineland.com/optimizing-chatgpt-shopping-463316",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "Product Feed Optimization for AI Agents (2026 Guide)",
+          "url": "https://ucphub.ai/product-feed-optimization-for-ai-shopping-agents-the-2026-distribution-guide/",
+          "date": "2026",
+          "type": "industry"
+        },
+        {
+          "title": "ChatGPT Ads for Ecommerce: Product Feed Integration (2026)",
+          "url": "https://www.adventureppc.com/blog/chatgpt-ads-for-ecommerce-product-feed-integration-and-shopping-ads-in-2026",
+          "date": "2026",
+          "type": "industry"
+        }
+      ],
+      "stats": [
+        {
+          "value": "15 min",
+          "metric": "frequence de mise a jour possible pour le feed ChatGPT Shopping",
+          "source_index": 0
+        },
+        {
+          "value": "3-4x",
+          "metric": "visibilite pour stores avec Golden Record vs sparse data",
+          "source_index": 2
+        }
+      ],
+      "kb_slug": "sell-on-chatgpt-shopify",
+      "summary": {
+        "fr": "Le feed produit est LE canal principal pour ChatGPT Shopping et Perplexity. Un feed enrichi (use-case, problem-solution, lifestyle, compatibilite) performe mieux qu'une copie du feed Google Shopping. Updates possibles toutes les 15 min. Le feed est le produit.",
+        "en": "The product feed is THE main channel for ChatGPT Shopping and Perplexity. An enriched feed (use-case, problem-solution, lifestyle, compatibility) outperforms a Google Shopping feed copy. Updates possible every 15 min. The feed is the product."
+      },
+      "last_verified": "2026-04-12",
+      "confidence": "high"
+    }
+  ]
+}

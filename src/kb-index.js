@@ -219,11 +219,56 @@ const KB_ARTICLES = [
   },
 ];
 
+// ── GEO Evidence Cards Index ──────────────────────────────────────────
+// Single source of truth: verity-server/shared/geo-evidence.json
+// Provides platform-specific impact data, sources, and stats.
+
+let _geoEvidenceCards = [];
+try {
+  const { createRequire } = await import('module');
+  const require = createRequire(import.meta.url);
+  const data = require('../../verity-server/shared/geo-evidence.json');
+  _geoEvidenceCards = data.cards || [];
+} catch (_e) {
+  // geo-evidence.json not found - graceful fallback
+}
+
+// Build search tags for evidence cards
+const _evidenceSearchIndex = _geoEvidenceCards.map(card => ({
+  id: card.id,
+  searchTerms: [
+    card.id,
+    card.id.replace(/_/g, '-'),
+    card.id.replace(/_/g, ' '),
+    ...(card.label?.en || '').toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 2),
+    ...(card.label?.fr || '').toLowerCase().split(/[^a-z0-9]+/).filter(w => w.length > 2),
+    card.category,
+    ...(card.zones || []).map(z => z.toLowerCase()),
+  ].filter(Boolean),
+}));
+
+/**
+ * Find a GEO evidence card by topic.
+ * @param {string} q - normalized query
+ * @returns {object|null} evidence card
+ */
+function _findEvidenceCard(q) {
+  // Exact id match
+  let idx = _evidenceSearchIndex.findIndex(e => e.id === q || e.id === q.replace(/-/g, '_') || e.id === q.replace(/\s+/g, '_'));
+  // Tag match
+  if (idx < 0) idx = _evidenceSearchIndex.findIndex(e => e.searchTerms.includes(q) || e.searchTerms.includes(q.replace(/\s+/g, '-')));
+  // Partial match
+  if (idx < 0) idx = _evidenceSearchIndex.findIndex(e => e.searchTerms.some(t => t.includes(q) || q.includes(t)));
+  if (idx < 0) return null;
+  return _geoEvidenceCards[idx];
+}
+
 /**
  * Find the best matching KB article for a topic string.
  * Match priority: exact slug > exact tag > partial tag/title match.
+ * Falls through to GEO evidence cards if no KB article found.
  * @param {string} topic
- * @returns {{ slug, title, description, url, keyPoints } | null}
+ * @returns {{ slug, title, description, url, keyPoints, _type: 'kb' } | { _type: 'evidence', ...card } | null}
  */
 export function findArticleByTopic(topic) {
   if (!topic || typeof topic !== 'string') return null;
@@ -239,20 +284,32 @@ export function findArticleByTopic(topic) {
     a.title.toLowerCase().includes(q)
   );
 
-  if (!match) return null;
-  return {
-    slug: match.slug,
-    title: match.title,
-    description: match.description,
-    url: { en: `${BASE}/en/kb/${match.slug}/`, fr: `${BASE}/fr/kb/${match.slug}/` },
-    keyPoints: match.keyPoints,
-  };
+  if (match) {
+    return {
+      _type: 'kb',
+      slug: match.slug,
+      title: match.title,
+      description: match.description,
+      url: { en: `${BASE}/en/kb/${match.slug}/`, fr: `${BASE}/fr/kb/${match.slug}/` },
+      keyPoints: match.keyPoints,
+    };
+  }
+
+  // 4. GEO Evidence card match (V2: platform impact + sources)
+  const evidenceCard = _findEvidenceCard(q);
+  if (evidenceCard) {
+    return { _type: 'evidence', ...evidenceCard };
+  }
+
+  return null;
 }
 
 /**
- * List all available topics (slug + title).
+ * List all available topics (slug + title), including evidence cards.
  * @returns {Array<{ slug, title }>}
  */
 export function listAllTopics() {
-  return KB_ARTICLES.map(a => ({ slug: a.slug, title: a.title }));
+  const kbTopics = KB_ARTICLES.map(a => ({ slug: a.slug, title: a.title }));
+  const evidenceTopics = _geoEvidenceCards.map(c => ({ slug: c.id, title: c.label?.en || c.id }));
+  return [...kbTopics, ...evidenceTopics];
 }

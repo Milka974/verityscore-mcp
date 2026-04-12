@@ -277,6 +277,28 @@ export function registerExplainTopic(server, storage) {
     async ({ topic }) => {
       const article = findArticleByTopic(topic);
 
+      if (article && article._type === 'evidence') {
+        // GEO Evidence Card V2: platform impact, sources, stats
+        const card = article;
+        const result = {
+          found: true,
+          topic: card.id,
+          title: card.label?.en || card.id,
+          description: card.summary?.en || card.summary?.fr || '',
+          keyPoints: (card.stats || []).map(s => `${s.value} ${s.metric}`),
+          impact: Object.fromEntries(
+            Object.entries(card.impact || {}).map(([platform, data]) => [platform, { level: data.level, evidence: data.evidence }])
+          ),
+          pageContext: card.page_context,
+          sources: (card.sources || []).map(s => ({ title: s.title, url: s.url, date: s.date, type: s.type })),
+          readMore: card.kb_slug ? { en: `${SITE}/en/kb/${card.kb_slug}/`, fr: `${SITE}/fr/kb/${card.kb_slug}/` } : null,
+          confidence: card.confidence,
+          lastVerified: card.last_verified,
+        };
+        trackRequest(storage, { tool: 'explain_topic', input: { topic }, responseStatus: 'success' });
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+
       if (article) {
         const result = {
           found: true,
