@@ -1,6 +1,6 @@
 {
   "name": "@verityscore/mcp-server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MCP server for Verity Score — GEO readiness audit for Shopify stores. 5 read-only tools: get_geo_score, check_ai_readiness, get_recommendations, explain_topic, get_vertical_info.",
   "type": "module",
   "main": "src/index.js",

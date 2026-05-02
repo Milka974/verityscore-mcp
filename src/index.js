@@ -20,7 +20,7 @@ import rateLimit from 'express-rate-limit';
 function createMcpServer(storage) {
   const server = new McpServer({
     name: 'io.verityscore/geo-audit',
-    version: '1.0.0',
+    version: '1.0.1',
   }, {
     instructions: 'Verity Score provides GEO readiness auditing for Shopify e-commerce stores. Use check_ai_readiness for a quick real-time check of any website. Use get_geo_score for a full audit score (queues unknown stores for 72h analysis). Use get_recommendations for actionable fixes. Use explain_topic to learn about GEO concepts (schema.org, robots.txt, llms.txt, etc.). Use get_vertical_info for industry-specific checklists.',
   });

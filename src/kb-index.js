@@ -220,14 +220,14 @@ const KB_ARTICLES = [
 ];
 
 // ── GEO Evidence Cards Index ──────────────────────────────────────────
-// Single source of truth: verity-server/shared/geo-evidence.json
+// Bundled with the package: ./geo-evidence.json (shipped via package.json files).
 // Provides platform-specific impact data, sources, and stats.
 
 let _geoEvidenceCards = [];
 try {
   const { createRequire } = await import('module');
   const require = createRequire(import.meta.url);
-  const data = require('../../verity-server/shared/geo-evidence.json');
+  const data = require('./geo-evidence.json');
   _geoEvidenceCards = data.cards || [];
 } catch (_e) {
   // geo-evidence.json not found - graceful fallback
