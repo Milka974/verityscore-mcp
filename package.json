@@ -42,10 +42,10 @@
   "mcpName": "io.verityscore/geo-audit",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "zod": "^3.25.0"
+    "zod": "^4.0.0"
   },
   "peerDependencies": {
-    "express": "^4.18.0 || ^5.0.0",
+    "express": "^5.0.0",
     "express-rate-limit": "^7.0.0 || ^8.0.0"
   },
   "peerDependenciesMeta": {
@@ -53,7 +53,7 @@
     "express-rate-limit": { "optional": true }
   },
   "devDependencies": {
-    "express": "^4.21.0",
+    "express": "^5.0.0",
     "express-rate-limit": "^8.3.1"
   }
 }
