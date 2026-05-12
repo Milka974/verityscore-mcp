@@ -193,7 +193,7 @@
       "impact": {
         "google_aio": {
           "level": "high",
-          "evidence": "Google AI Mode verifie les faits en temps reel. Un ecart de prix entre schema et page affiche declenche une exclusion."
+          "evidence": "Google AI Mode peut verifier les faits en temps reel. Un ecart de prix entre schema, feed et page affichee peut reduire l'eligibilite ou la confiance dans certains affichages."
         },
         "perplexity": {
           "level": "critical",
@@ -201,17 +201,17 @@
         },
         "chatgpt_shopping": {
           "level": "critical",
-          "evidence": "ChatGPT Shopping utilise le feed produit. Incoherence feed/page = produit exclu ou mal recommande."
+          "evidence": "ChatGPT Shopping utilise le feed produit. Une incoherence feed/page peut rendre le produit moins eligible ou moins fiable dans la recommandation."
         },
         "general_llm": {
           "level": "high",
-          "evidence": "Les agents comparent systematiquement prix structures et prix affiches. Ecart = signal de non-fiabilite."
+          "evidence": "Les systemes d'AI commerce peuvent comparer les prix structures, visibles et issus du feed. Un ecart devient un signal de fiabilite negatif."
         }
       },
       "page_context": {
         "product_page": {
           "relevance": "critical",
-          "why": "L'agent IA compare le prix schema vs prix affiche. Un ecart (ex: 3.90 EUR vs 29.90 EUR) tue la confiance et exclut le produit."
+          "why": "L'agent IA peut comparer le prix schema, feed et prix affiche. Un ecart (ex: 3.90 EUR vs 29.90 EUR) degrade fortement la confiance et peut rendre le produit moins eligible."
         },
         "editorial": {
           "relevance": "low",
@@ -251,8 +251,8 @@
       ],
       "kb_slug": "pricing-ai-visibility",
       "summary": {
-        "fr": "Un ecart de prix entre le schema JSON-LD et le prix affiche sur la page est un signal critique pour tous les agents IA. Perplexity et ChatGPT Shopping affichent le prix du schema/feed - toute incoherence entraine l'exclusion du produit des recommandations.",
-        "en": "A price gap between JSON-LD schema and the displayed price is a critical signal for all AI agents. Perplexity and ChatGPT Shopping display the schema/feed price - any inconsistency leads to product exclusion from recommendations."
+        "fr": "Un ecart de prix entre JSON-LD, page visible et feed est un signal critique de coherence. Il peut degrader la confiance, l'eligibilite ou la qualite de recommandation selon la plateforme.",
+        "en": "A price gap between JSON-LD, visible page content, and feed data is a critical consistency signal. Depending on the platform, it can degrade trust, eligibility, or recommendation quality."
       },
       "last_verified": "2026-04-12",
       "confidence": "high"
@@ -273,7 +273,7 @@
         },
         "perplexity": {
           "level": "critical",
-          "evidence": "Schema.org Product+Offer+Review+AggregateRating = must-have. GTIN critique pour matching et deduplication."
+          "evidence": "Product+Offer sont structurants; Review/AggregateRating ajoutent un signal de confiance utile quand les avis sont verifies, visibles et conformes aux regles Google. GTIN reste critique pour matching et deduplication."
         },
         "chatgpt_shopping": {
           "level": "high",
@@ -281,7 +281,7 @@
         },
         "general_llm": {
           "level": "critical",
-          "evidence": "Schema.org est le langage commun que tous les agents IA utilisent pour comprendre les produits."
+          "evidence": "Schema.org est un format largement utilise par les moteurs, crawlers et systemes d'indexation pour interpreter les donnees produit."
         }
       },
       "page_context": {
@@ -343,8 +343,8 @@
       ],
       "kb_slug": "schema-org",
       "summary": {
-        "fr": "Le schema.org Product est le langage que les crawlers IA utilisent pour comprendre vos produits. Les pages avec donnees structurees ont 73% plus de chances d'etre selectionnees en AI Overview et 3x plus de chances d'etre citees. Chaque champ manquant (GTIN, prix, dispo, avis) est un signal perdu.",
-        "en": "Schema.org Product is the language AI crawlers use to understand your products. Pages with structured data have 73% higher selection rates in AI Overviews and are 3x more likely to be cited. Every missing field (GTIN, price, availability, reviews) is a lost signal."
+        "fr": "Schema.org Product aide les systemes de recherche et d'AI commerce a interpreter les fiches produit. Les etudes citees suggerent une correlation positive entre donnees structurees completes et visibilite/citation, sans garantie d'affichage. Chaque champ manquant (GTIN, prix, dispo, avis) affaiblit le signal.",
+        "en": "Schema.org Product helps search and AI commerce systems interpret product pages. The cited studies suggest a positive correlation between complete structured data and visibility/citation, without guaranteeing display. Every missing field (GTIN, price, availability, reviews) weakens the signal."
       },
       "last_verified": "2026-04-12",
       "confidence": "high"
@@ -365,21 +365,21 @@
         },
         "perplexity": {
           "level": "critical",
-          "evidence": "Le ranking model Perplexity inclut le review trust score comme facteur cle. Schema AggregateRating = must-have."
+          "evidence": "Les signaux d'avis peuvent contribuer a la confiance et au tri produit. AggregateRating est utile lorsqu'il reflete des avis reels, visibles et verifiables."
         },
         "chatgpt_shopping": {
           "level": "high",
-          "evidence": "ChatGPT Shopping synthetise les pros/cons depuis les reviews. Aggregate rating affiche dans les cartes produit."
+          "evidence": "Les notes et avis peuvent etre exploites dans certaines experiences produit, mais l'affichage d'etoiles ou de rating n'est pas garanti."
         },
         "general_llm": {
           "level": "high",
-          "evidence": "Sans note agregee structuree, les agents ne peuvent pas comparer les produits objectivement."
+          "evidence": "Sans note structuree, les agents disposent de moins de signaux quantifies pour comparer la confiance relative entre produits."
         }
       },
       "page_context": {
         "product_page": {
           "relevance": "critical",
-          "why": "Pas de note = pas de recommandation. L'agent ne peut pas justifier un choix sans rating."
+          "why": "Pas de note structuree = signal de preuve plus faible. La recommandation reste possible, mais moins justifiable sur l'axe confiance/avis."
         },
         "editorial": {
           "relevance": "low",
@@ -424,8 +424,8 @@
       ],
       "kb_slug": "aggregate-rating",
       "summary": {
-        "fr": "Sans AggregateRating dans le schema, les agents IA ne peuvent pas comparer objectivement votre produit aux concurrents. Perplexity Shopping utilise le review trust score comme facteur cle de ranking. Pas de note structuree = produit invisible en recommandation.",
-        "en": "Without AggregateRating in schema, AI agents cannot objectively compare your product to competitors. Perplexity Shopping uses review trust score as a key ranking factor. No structured rating = invisible product in recommendations."
+        "fr": "Sans AggregateRating dans le schema, le produit devient moins comparable sur les criteres de preuve sociale et potentiellement moins competitif dans les recommandations.",
+        "en": "Without AggregateRating in schema, the product is less comparable on social-proof criteria and may be less competitive in recommendations."
       },
       "last_verified": "2026-04-12",
       "confidence": "high"
@@ -1324,7 +1324,7 @@
         },
         "general_llm": {
           "level": "high",
-          "evidence": "GPTBot, ClaudeBot, PerplexityBot, Bytespider - chaque bot bloque = une plateforme perdue."
+          "evidence": "Les bots Search/Citation (OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Googlebot, Bingbot, Claude-SearchBot quand mesure) doivent etre traites separement des bots training/usage-control (GPTBot, ClaudeBot, Google-Extended, Bytespider). Bloquer un bot de citation peut couper une surface de reponse IA ; bloquer un bot training est une politique de controle d'usage, pas une perte directe de citation."
         }
       },
       "page_context": {
@@ -1358,8 +1358,8 @@
       "stats": [],
       "kb_slug": "robots-crawlers",
       "summary": {
-        "fr": "Chaque bot IA bloque dans robots.txt = une plateforme perdue. GPTBot, ClaudeBot, PerplexityBot, OAI-SearchBot doivent etre autorises. En 2026, Amazon restreint ses crawlers et Walmart gagne en visibilite IA - le controle d'acces est un levier strategique.",
-        "en": "Every AI bot blocked in robots.txt = a lost platform. GPTBot, ClaudeBot, PerplexityBot, OAI-SearchBot must be allowed. In 2026, Amazon restricts its crawlers and Walmart gains AI visibility - access control is a strategic lever."
+        "fr": "Le robots.txt doit separer les crawlers de citation/search des crawlers de training. Autoriser OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Googlebot et Bingbot protege la visibilite dans les reponses IA. GPTBot, ClaudeBot, Google-Extended, Bytespider et autres bots training doivent etre pilotes comme une politique d'usage des donnees, pas comme une preuve de readiness commerce.",
+        "en": "robots.txt must separate citation/search crawlers from training crawlers. Allowing OAI-SearchBot, ChatGPT-User, PerplexityBot, Perplexity-User, Googlebot and Bingbot protects AI answer visibility. GPTBot, ClaudeBot, Google-Extended, Bytespider and other training bots should be managed as a data-usage policy, not as commerce readiness proof."
       },
       "last_verified": "2026-04-12",
       "confidence": "high"

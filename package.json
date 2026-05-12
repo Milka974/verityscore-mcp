@@ -13,8 +13,9 @@
     "README.md"
   ],
   "scripts": {
-"start": "node src/cli.js",
-    "dev": "node --watch src/cli.js"
+    "start": "node src/cli.js",
+    "dev": "node --watch src/cli.js",
+    "test": "node --test"
   },
   "engines": {
     "node": ">=18.0.0"

@@ -91,29 +91,113 @@ export function registerGetGeoScore(server, storage) {
 
 // ── TOOL 2: check_ai_readiness ─────────────────────────────────────────
 
-const AI_CRAWLERS = ['GPTBot', 'ClaudeBot', 'PerplexityBot', 'Google-Extended', 'ChatGPT-User'];
+const ROBOTS_BOTS = [
+  { userAgent: 'OAI-SearchBot', category: 'discovery_search', scoring: true },
+  { userAgent: 'Claude-SearchBot', category: 'discovery_search', scoring: true },
+  { userAgent: 'PerplexityBot', category: 'discovery_search', scoring: true },
+  { userAgent: 'Perplexity-User', category: 'on_demand', scoring: true },
+  { userAgent: 'Googlebot', category: 'discovery_search', scoring: true },
+  { userAgent: 'Storebot-Google', category: 'discovery_search', scoring: true },
+  { userAgent: 'Bingbot', category: 'discovery_search', scoring: true },
+  { userAgent: 'Amazonbot', category: 'discovery_search', scoring: true },
+  { userAgent: 'DuckAssistBot', category: 'discovery_search', scoring: true },
+  { userAgent: 'ChatGPT-User', category: 'on_demand', scoring: true },
+  { userAgent: 'Claude-User', category: 'on_demand', scoring: true },
+  { userAgent: 'MistralAI-User', category: 'on_demand', scoring: true },
+  { userAgent: 'GPTBot', category: 'training_policy', scoring: false },
+  { userAgent: 'ClaudeBot', category: 'training_policy', scoring: false },
+  { userAgent: 'anthropic-ai', category: 'training_policy', scoring: false },
+  { userAgent: 'Google-Extended', category: 'training_policy', scoring: false },
+  { userAgent: 'Google-CloudVertexBot', category: 'training_policy', scoring: false },
+  { userAgent: 'Applebot-Extended', category: 'training_policy', scoring: false },
+  { userAgent: 'Bytespider', category: 'training_policy', scoring: false },
+  { userAgent: 'CCBot', category: 'training_policy', scoring: false },
+  { userAgent: 'Meta-ExternalAgent', category: 'training_policy', scoring: false },
+  { userAgent: 'meta-externalagent', category: 'training_policy', scoring: false },
+  { userAgent: 'cohere-ai', category: 'training_policy', scoring: false },
+  { userAgent: 'Diffbot', category: 'training_policy', scoring: false },
+  { userAgent: 'AI2Bot', category: 'training_policy', scoring: false },
+  { userAgent: 'AI2Bot-Dolma', category: 'training_policy', scoring: false },
+  { userAgent: 'ImagesiftBot', category: 'training_policy', scoring: false },
+  { userAgent: 'Timespider', category: 'training_policy', scoring: false },
+];
 
 function parseRobotsTxt(text) {
   const lines = text.split('\n');
   const rules = {};
-  let currentAgent = '*';
+  let currentAgents = ['*'];
   for (const line of lines) {
     const trimmed = line.trim();
+    if (!trimmed) {
+      currentAgents = ['*'];
+      continue;
+    }
     const agentMatch = trimmed.match(/^User-agent:\s*(.+)/i);
-    if (agentMatch) { currentAgent = agentMatch[1].trim(); continue; }
+    if (agentMatch) {
+      const agent = agentMatch[1].trim();
+      const hasDirective = currentAgents.some(currentAgent => rules[currentAgent]);
+      currentAgents = hasDirective ? [agent] : [...currentAgents.filter(currentAgent => currentAgent !== '*'), agent];
+      continue;
+    }
     const allowMatch = trimmed.match(/^Allow:\s*(.+)/i);
-    if (allowMatch) { rules[currentAgent] = { ...(rules[currentAgent] || {}), allow: true }; continue; }
+    if (allowMatch) {
+      for (const currentAgent of currentAgents) rules[currentAgent] = { ...(rules[currentAgent] || {}), allow: true };
+      continue;
+    }
     const disallowMatch = trimmed.match(/^Disallow:\s*\/\s*$/i);
-    if (disallowMatch) { rules[currentAgent] = { ...(rules[currentAgent] || {}), disallow: true }; }
+    if (disallowMatch) {
+      for (const currentAgent of currentAgents) rules[currentAgent] = { ...(rules[currentAgent] || {}), disallow: true };
+    }
   }
-  const crawlerStatus = {};
-  for (const crawler of AI_CRAWLERS) {
-    const specific = rules[crawler];
-    if (specific?.allow) crawlerStatus[crawler] = 'allowed';
-    else if (specific?.disallow) crawlerStatus[crawler] = 'blocked';
-    else crawlerStatus[crawler] = rules['*']?.disallow ? 'blocked_by_wildcard' : 'not_specified';
+  const botStatus = {};
+  for (const bot of ROBOTS_BOTS) {
+    const specific = rules[bot.userAgent];
+    let status;
+    if (specific?.allow) status = 'allowed';
+    else if (specific?.disallow) status = 'blocked';
+    else status = rules['*']?.disallow ? 'blocked_by_wildcard' : 'not_specified';
+    botStatus[bot.userAgent] = { ...bot, status };
   }
-  return crawlerStatus;
+  return botStatus;
+}
+
+function blockedBots(bots) {
+  return bots.filter(bot => bot.status.includes('block'));
+}
+
+export function analyzeRobotsTxt(text) {
+  const bots = Object.values(parseRobotsTxt(text));
+  const scoringBots = bots.filter(bot => bot.scoring);
+  const policyBots = bots.filter(bot => !bot.scoring);
+  const scoringBlocked = blockedBots(scoringBots);
+  const policyBlocked = blockedBots(policyBots);
+  const searchBlocked = scoringBlocked.filter(bot => bot.category === 'discovery_search');
+  const onDemandBlocked = scoringBlocked.filter(bot => bot.category === 'on_demand');
+
+  let detail;
+  if (scoringBlocked.length > 0) {
+    const parts = [];
+    if (searchBlocked.length) parts.push(`discovery/search: ${searchBlocked.map(bot => bot.userAgent).join(', ')} blocked`);
+    if (onDemandBlocked.length) parts.push(`on-demand: ${onDemandBlocked.map(bot => bot.userAgent).join(', ')} blocked`);
+    detail = `Found but shopping visibility bots need attention (${parts.join('; ')})`;
+  } else if (policyBlocked.length > 0) {
+    detail = `Found — shopping discovery/on-demand bots are not blocked; training/policy bots restricted: ${policyBlocked.map(bot => bot.userAgent).join(', ')}`;
+  } else {
+    detail = 'Found — shopping discovery and on-demand bots allowed';
+  }
+
+  return {
+    ok: scoringBlocked.length === 0,
+    detail,
+    scoring: {
+      bots: scoringBots,
+      blocked: scoringBlocked,
+    },
+    policy: {
+      bots: policyBots,
+      blocked: policyBlocked,
+    },
+  };
 }
 
 export function registerCheckAiReadiness(server, storage) {
@@ -143,17 +227,19 @@ export function registerCheckAiReadiness(server, storage) {
 
       // 1. robots.txt
       if (robotsRes.ok) {
-        const crawlers = parseRobotsTxt(robotsRes.text || '');
-        const blocked = Object.entries(crawlers).filter(([, v]) => v.includes('block'));
+        const robots = analyzeRobotsTxt(robotsRes.text || '');
         checks.push({
           file: 'robots.txt', found: true,
-          detail: blocked.length > 0
-            ? `Found but ${blocked.map(([k]) => k).join(', ')} blocked`
-            : 'Found — all AI crawlers allowed',
-          ok: blocked.length === 0,
+          detail: robots.detail,
+          ok: robots.ok,
+          scoringBots: robots.scoring.bots,
+          policyBots: robots.policy.bots,
+          recommendation: robots.ok
+            ? 'Keep discovery/search and on-demand access aligned with your shopping visibility goals. Training/policy bots can stay restricted if that is your data policy.'
+            : 'Fix discovery/search or on-demand bot access first. Do not treat training/policy bot restrictions as shopping visibility blockers.',
         });
       } else {
-        checks.push({ file: 'robots.txt', found: false, detail: 'Not found — AI crawlers have no guidance', ok: false, kbUrl: `${SITE}/en/kb/robots-crawlers/` });
+        checks.push({ file: 'robots.txt', found: false, detail: 'Not found — discovery/search, on-demand, and training/policy bots have no explicit guidance', ok: false, kbUrl: `${SITE}/en/kb/robots-crawlers/` });
       }
 
       // 2. llms.txt

@@ -33,12 +33,12 @@ const KB_ARTICLES = [
   {
     slug: 'robots-crawlers',
     title: 'robots.txt and AI Crawlers: Access Control',
-    description: 'How to configure robots.txt to allow GPTBot, ClaudeBot, PerplexityBot and other AI crawlers.',
+    description: 'How to configure robots.txt for AI search and on-demand crawlers without confusing them with training-policy bots.',
     tags: ['robots.txt', 'robots', 'crawlers', 'gptbot', 'claudebot', 'perplexitybot', 'ai-crawlers', 'access'],
     keyPoints: [
-      'Blocking AI crawlers in robots.txt makes your store invisible to ChatGPT and Perplexity',
+      'Blocking search/on-demand AI crawlers can reduce shopping visibility in ChatGPT, Claude, and Perplexity',
       'Cloudflare may inject Disallow rules for AI bots without your knowledge',
-      'Allow GPTBot, ClaudeBot, PerplexityBot, Google-Extended explicitly',
+      'Allow visibility crawlers such as OAI-SearchBot, Claude-SearchBot, PerplexityBot, ChatGPT-User, Claude-User, and Perplexity-User; treat GPTBot, ClaudeBot, Google-Extended, and Applebot-Extended as training/policy controls',
     ],
   },
   {
