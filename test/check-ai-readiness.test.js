@@ -63,6 +63,62 @@ Allow: /
   assert.match(check.detail, /MistralAI-User/i);
 });
 
+test('robots scoring: a non-root Allow does NOT override a site-wide Disallow', () => {
+  // Real-world pattern: Disallow everything but expose the sitemap.
+  const robots = `
+User-agent: PerplexityBot
+Allow: /sitemap.xml
+Disallow: /
+`;
+  const check = analyzeRobotsTxt(robots);
+  assert.equal(check.ok, false);
+  assert.deepEqual(check.scoring.blocked.map(bot => bot.userAgent), ['PerplexityBot']);
+});
+
+test('robots scoring: Allow: / overrides Disallow: / (equal-length match wins)', () => {
+  const robots = `
+User-agent: PerplexityBot
+Disallow: /
+Allow: /
+`;
+  const check = analyzeRobotsTxt(robots);
+  assert.equal(check.ok, true);
+  assert.equal(check.scoring.blocked.length, 0);
+});
+
+test('robots scoring: a blank line does not leak a directive to the wildcard group', () => {
+  // Googlebot is allowed; the blank line must NOT reattribute the next Disallow to '*'.
+  const robots = `
+User-agent: Googlebot
+Allow: /
+
+Disallow: /
+`;
+  const check = analyzeRobotsTxt(robots);
+  // The orphan Disallow after the blank line belongs to no new wildcard group,
+  // so no scoring bot should be reported blocked_by_wildcard.
+  assert.equal(check.scoring.blocked.length, 0);
+});
+
+test('robots scoring: User-agent matching is case-insensitive', () => {
+  const robots = `
+user-agent: gptbot
+disallow: /
+`;
+  const check = analyzeRobotsTxt(robots);
+  assert.deepEqual(check.policy.blocked.map(bot => bot.userAgent), ['GPTBot']);
+});
+
+test('robots scoring: inline comments are stripped', () => {
+  const robots = `
+User-agent: OAI-SearchBot
+Disallow: / # block everything for now
+`;
+  const check = analyzeRobotsTxt(robots);
+  assert.equal(check.ok, false);
+  assert.deepEqual(check.scoring.blocked.map(bot => bot.userAgent), ['OAI-SearchBot']);
+});
+
 test('robots scoring applies grouped user-agent directives to every bot in the group', () => {
   const robots = `
 User-agent: OAI-SearchBot

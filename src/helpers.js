@@ -99,11 +99,18 @@ async function resolveSafe(hostname) {
     return { safe: !isPrivateIP(hostname), resolvedIP: hostname };
   }
 
-  // DNS resolve — force IPv4 to prevent IPv6 bypass
+  // DNS resolve ALL addresses across BOTH families and validate every record.
+  // Checking only the first IPv4 left a dual-stack bypass open: a hostname with
+  // a public A record but a private AAAA record (or vice-versa) would pass, then
+  // fetch could connect over the private address. Block if ANY record is private.
+  // NOTE: this does not fully close DNS-rebinding TOCTOU (fetch re-resolves at
+  // connect time); full defense would require pinning the connection IP via a
+  // custom dispatcher.
   try {
-    const { address } = await lookup(hostname, { family: 4 });
-    if (isPrivateIP(address)) return { safe: false };
-    return { safe: true, resolvedIP: address };
+    const records = await lookup(hostname, { all: true });
+    if (!records.length) return { safe: false };
+    if (records.some(r => isPrivateIP(r.address))) return { safe: false };
+    return { safe: true, resolvedIP: records[0].address };
   } catch {
     return { safe: false }; // DNS failure = blocked
   }

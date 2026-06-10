@@ -122,40 +122,61 @@ const ROBOTS_BOTS = [
   { userAgent: 'Timespider', category: 'training_policy', scoring: false },
 ];
 
+// RFC 9309-conformant enough for root-access scoring:
+//  - inline comments stripped, blank lines do NOT reset the group
+//  - a new group starts only on a User-agent line that follows a directive
+//  - User-agent matching is case-insensitive
+//  - a bot is blocked only when Disallow: / is NOT overridden by an equal Allow: /
+//    (so Allow: /sitemap.xml never unblocks a site-wide Disallow: /)
 function parseRobotsTxt(text) {
-  const lines = text.split('\n');
-  const rules = {};
-  let currentAgents = ['*'];
-  for (const line of lines) {
-    const trimmed = line.trim();
-    if (!trimmed) {
-      currentAgents = ['*'];
+  const rules = {}; // normalizedAgent -> { allow: Set<string>, disallow: Set<string> }
+  let currentAgents = null;
+  let lastWasDirective = false;
+
+  const ensure = (agent) => {
+    if (!rules[agent]) rules[agent] = { allow: new Set(), disallow: new Set() };
+    return rules[agent];
+  };
+
+  for (const rawLine of text.split('\n')) {
+    const line = rawLine.replace(/#.*$/, '').trim(); // strip inline comments
+    if (!line) continue; // blank line: no group reset (RFC 9309)
+
+    const colon = line.indexOf(':');
+    if (colon === -1) continue;
+    const key = line.slice(0, colon).trim().toLowerCase();
+    const value = line.slice(colon + 1).trim();
+
+    if (key === 'user-agent') {
+      const agent = value.toLowerCase();
+      if (currentAgents && !lastWasDirective) {
+        currentAgents.push(agent); // consecutive User-agent lines share the group
+      } else {
+        currentAgents = [agent];
+      }
+      ensure(agent);
+      lastWasDirective = false;
       continue;
     }
-    const agentMatch = trimmed.match(/^User-agent:\s*(.+)/i);
-    if (agentMatch) {
-      const agent = agentMatch[1].trim();
-      const hasDirective = currentAgents.some(currentAgent => rules[currentAgent]);
-      currentAgents = hasDirective ? [agent] : [...currentAgents.filter(currentAgent => currentAgent !== '*'), agent];
-      continue;
+
+    if (key === 'allow' || key === 'disallow') {
+      if (!currentAgents) continue; // directive before any User-agent: ignore
+      for (const agent of currentAgents) ensure(agent)[key].add(value);
+      lastWasDirective = true;
     }
-    const allowMatch = trimmed.match(/^Allow:\s*(.+)/i);
-    if (allowMatch) {
-      for (const currentAgent of currentAgents) rules[currentAgent] = { ...(rules[currentAgent] || {}), allow: true };
-      continue;
-    }
-    const disallowMatch = trimmed.match(/^Disallow:\s*\/\s*$/i);
-    if (disallowMatch) {
-      for (const currentAgent of currentAgents) rules[currentAgent] = { ...(rules[currentAgent] || {}), disallow: true };
-    }
+    // other directives (sitemap, crawl-delay) don't affect grouping/status
   }
+
+  const blocksRoot = (set) => set.has('/') || set.has('/*');
+  const rootBlocked = (r) => !!r && blocksRoot(r.disallow) && !blocksRoot(r.allow);
+  const wildcard = rules['*'];
+
   const botStatus = {};
   for (const bot of ROBOTS_BOTS) {
-    const specific = rules[bot.userAgent];
+    const specific = rules[bot.userAgent.toLowerCase()];
     let status;
-    if (specific?.allow) status = 'allowed';
-    else if (specific?.disallow) status = 'blocked';
-    else status = rules['*']?.disallow ? 'blocked_by_wildcard' : 'not_specified';
+    if (specific) status = rootBlocked(specific) ? 'blocked' : 'allowed';
+    else status = rootBlocked(wildcard) ? 'blocked_by_wildcard' : 'not_specified';
     botStatus[bot.userAgent] = { ...bot, status };
   }
   return botStatus;
